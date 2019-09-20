@@ -97,7 +97,8 @@ class MainGame(object):
         if load_data:
             self.load_data()
             self.map_grid = deepcopy(self.original_map_grid)
-            self.map_grid[self.player.object_pos[0]][self.player.object_pos[1]] = self.player.displayed_character
+            self.map_grid[self.player.object_data["object_pos"][0]][self.player.object_data["object_pos"][1]]\
+                = self.player.object_data["displayed_character"] 
         else:
             self.player = MazeObject()
             self.level = 1
@@ -194,21 +195,21 @@ class MainGame(object):
         # TODO: Take player's luckiness into account.
         def _player_turn_normal_attack():
             # Player turn
-            player_base_attack_value = self.player.strength
+            player_base_attack_value = self.player.object_data["strength"]
             player_attack_value = int(round(uniform(0.8,1.0) * player_base_attack_value, 0))
-            enemy.current_hp -= player_attack_value
+            enemy.object_data["current_hp"] -= player_attack_value
             
-            if enemy.current_hp < 1:
+            if enemy.object_data["current_hp"]  < 1:
                 print("You defeated the creature!")
-                print("Player acquire {} exp".format(enemy.exp))
+                print("Player acquire {} exp".format(enemy.object_data["exp"]))
                 print("Press any key to return to map...")
-                self.player._get_experience(enemy.exp)
+                self.player._get_experience(enemy.object_data["exp"])
                 
                 # If it is bigger, then the enemy will drop the 
-                if uniform(0,1.0) > 0.8 - (0.8 / (100 / (self.player.luckiness ** 0.70))):
+                if uniform(0,1.0) > 0.8 - (0.8 / (100 / (self.player.object_data["luckiness"] ** 0.70))):
                     print("Enemy dropped item!")
-                    print("The content of the item is {}".format(enemy.drop_item))
-                    self.player.items.append(enemy.drop_item)
+                    print("The content of the item is {}".format(enemy.object_data["drop_item"]))
+                    self.player.object_data["items"].append(enemy.object_data["drop_item"])
                 
                 getch()
                 clear()
@@ -220,11 +221,11 @@ class MainGame(object):
 
         def _enemy_turn_normal_attack():
             # Enemy turn
-            enemy_base_attack_value = enemy.strength
+            enemy_base_attack_value = enemy.object_data["strength"]
             enemy_attack_value = int(round(uniform(0.8,1.0) * enemy_base_attack_value, 0))
-            self.player.current_hp -= enemy_attack_value
+            self.player.object_data["current_hp"]  -= enemy_attack_value
             
-            if self.player.current_hp < 1:
+            if self.player.object_data["current_hp"]  < 1:
                 print("You are defeated...")
                 print("Game Over...")
                 getch()
@@ -266,7 +267,7 @@ class MainGame(object):
                 if cursor_selection == 0:
 
                     # Turn based fight. The player can firstly fight for the enemy this value is higher.
-                    if uniform(0.8, 1.0)*self.player.agility > uniform(0.8,1.0)* enemy.agility:
+                    if uniform(0.8, 1.0)*self.player.object_data["agility"] > uniform(0.8,1.0)* enemy.object_data["agility"]:
                         if _player_turn_normal_attack():
                             break
                         if _enemy_turn_normal_attack():
@@ -337,11 +338,11 @@ class MainGame(object):
     # Reveal the grid of the map based on the player's location.
     def _reveal_map_grid(self):
 
-        for i in range(max(0, self.player.object_pos[0] - self.default_amount_to_reveal),\
-            min(self.player.object_pos[0] + self.default_amount_to_reveal, len(self.map_grid[0]))):
-            for j in range(max(0, self.player.object_pos[1] - self.default_amount_to_reveal),\
-                min(self.player.object_pos[1] + self.default_amount_to_reveal, len(self.map_grid))):
-                # Find Reveal the maps.
+        for i in range(max(0, self.player.object_data["object_pos"][0] - self.default_amount_to_reveal),\
+            min(self.player.object_data["object_pos"][0] + self.default_amount_to_reveal, len(self.map_grid[0]))):
+            for j in range(max(0, self.player.object_data["object_pos"][1] - self.default_amount_to_reveal),\
+                min(self.player.object_data["object_pos"][1] + self.default_amount_to_reveal, len(self.map_grid))):
+                # Reveal a part of maps around player at a certain amount.
                     self.hidden_map_grid[i][j] = self.map_grid[i][j]
 
     def _move_player_sub(self,str_direction, next_player_pos):
@@ -349,16 +350,16 @@ class MainGame(object):
         self.map_grid = deepcopy(self.original_map_grid)
 
         # Place player on the map based on the move player made.
-        self.map_grid[next_player_pos[0]][next_player_pos[1]] = self.player.displayed_character
+        self.map_grid[next_player_pos[0]][next_player_pos[1]] = self.player.object_data["displayed_character"]
 
         # Update player position.
-        self.player.object_pos = next_player_pos
+        self.player.object_data["object_pos"] = next_player_pos
         
-        self.player.current_ep = max(self.player.current_ep - 1, 0)
+        self.player.object_data["current_ep"] = max(self.player.object_data["current_ep"] - 1, 0)
 
         # if the current ep is zero. the current hp will decreases.
-        if self.player.current_ep == 0:
-            self.player.current_hp = max(self.player.current_hp - 1, 1)
+        if self.player.object_data["current_ep"] == 0:
+            self.player.object_data["current_hp"] = max(self.player.object_data["current_hp"] - 1, 1)
 
     # Allows the users to select whether they will proceed to the next floor...
     def _map_proceed_selection(self):
@@ -407,10 +408,10 @@ class MainGame(object):
 
 
     def _display_status(self):
-        print("HP: {}, MP: {}, SP: {}, EP: {}".format(self.player.current_hp, 
-        self.player.current_mp,
-        self.player.current_sp, 
-        self.player.current_ep))
+        print("HP: {}, MP: {}, SP: {}, EP: {}".format(self.player.object_data["current_hp"], 
+        self.player.object_data["current_mp"],
+        self.player.object_data["current_sp"], 
+        self.player.object_data["current_ep"]))
     
 
     def player_menu(self):
@@ -487,9 +488,11 @@ class MainGame(object):
             for i in range(menu_length):
                 if i < menu_length -1:
                     if selection_idx  == i:
-                        tmp[i] = section_selected + tmp[i] + ": "+ str(eval("self.player.{}".format(tmp[i])))
+                        # tmp[i] = section_selected + tmp[i] + ": "+ str(eval("self.player.{}".format(tmp[i])))
+                        tmp[i] = section_selected + tmp[i] + ": "+ str(self.player.object_data[tmp[i]])
                     else:
-                        tmp[i] = section_non_selected + tmp[i] + ": "+ str(eval("self.player.{}".format(tmp[i])))
+                        # tmp[i] = section_non_selected + tmp[i] + ": "+ str(eval("self.player.{}".format(tmp[i])))
+                        tmp[i] = section_non_selected + tmp[i] + ": "+ str(self.player.object_data[tmp[i]])
                 else:
                     if selection_idx  == i:
                         tmp[i] = section_selected + tmp[i]
@@ -500,29 +503,29 @@ class MainGame(object):
             print("="*30)
             print("\n".join(tmp))
             print("="*30)
-            print("Bonus point: {}".format(self.player.bonus_point))
+            print("Bonus point: {}".format(self.player.object_data["bonus_point"]))
             
             tmp = []
             for i in non_selected_parameters[:3]:
-                tmp.append("{0}: {1}".format(i, eval("self.player.{0}".format(i))))
-        
+                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
             print(" ".join(tmp))
             
             tmp = []
             for i in non_selected_parameters[3:]:
-                tmp.append("{0}: {1}".format(i, eval("self.player.{0}".format(i))))
+                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
                 
             print(" ".join(tmp))
             ch = getch()
 
             if ch == b'\r':
                 
-                if selection_idx < 3 and self.player.bonus_point > 0:
-                    exec("self.player.{} += 5".format(selection_str_list[selection_idx]))
-                    self.player.bonus_point -= 1
-                elif selection_idx >= 3 and selection_idx < menu_length - 1 and self.player.bonus_point > 0:
-                    exec("self.player.{} += 1".format(selection_str_list[selection_idx]))
-                    self.player.bonus_point -= 1
+                if selection_idx < 3 and self.player.object_data["bonus_point"] > 0:
+                    self.player.object_data[selection_str_list[selection_idx]] += 5
+                    self.player.object_data["bonus_point"] -= 1
+
+                elif selection_idx >= 3 and selection_idx < menu_length - 1 and self.player.object_data["bonus_point"] > 0:
+                    self.player.object_data[selection_str_list[selection_idx]] += 1
+                    self.player.object_data["bonus_point"] -= 1
 
                 elif selection_idx == menu_length - 1:
                     break
@@ -541,6 +544,10 @@ class MainGame(object):
             clear()
         clear()
 
+    # Based on the selected items, the items will be appear.
+    def _display_equitable_items_sub(self, selected_items):
+
+        pass
 
     def _display_item(self):
         
@@ -550,7 +557,7 @@ class MainGame(object):
         clear()
 
         while True:
-            selection_str_list = self.player.items + ["Exit"]
+            selection_str_list = self.player.object_data["items"] + ["Exit"]
             tmp = deepcopy(selection_str_list)
             menu_length = len(tmp)
             for i in range(menu_length):
@@ -562,17 +569,17 @@ class MainGame(object):
             print("="*30)
             print("\n".join(tmp))
             print("="*30)
-            print("Bonus point: {}".format(self.player.bonus_point))
+            print("Bonus point: {}".format(self.player.object_data["bonus_point"]))
             
             tmp = []
             for i in non_selected_parameters[:3]:
-                tmp.append("{0}: {1}".format(i, eval("self.player.{0}".format(i))))
+                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
         
             print(" ".join(tmp))
             
             tmp = []
             for i in non_selected_parameters[3:]:
-                tmp.append("{0}: {1}".format(i, eval("self.player.{0}".format(i))))
+                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
                 
             print(" ".join(tmp))
             ch = getch()
@@ -581,12 +588,12 @@ class MainGame(object):
                 
                 if selection_idx < menu_length - 1:
                     # TODO: The temporary effect needs to be considered.
-                    item_name = selection_str_list[selection_idx]
-                    item_effect = item_json[selection_str_list[selection_idx]]
-                    item = Item(item_name, item_effect)
-                    
-                    if item.use_item(self.player):
-                        del self.player.items[selection_idx]
+                    item = {}
+                    item[selection_str_list[selection_idx]] = item_json[selection_str_list[selection_idx]]
+
+                    if use_item(self.player, selection_str_list[selection_idx], item):
+                        
+                        del self.player.object_data["items"][selection_idx]
 
                 # Exit Item menu.
                 elif selection_idx == menu_length - 1:
@@ -623,11 +630,10 @@ class MainGame(object):
 
         for attribute in numerical_player_strengh + current_status_player + non_numerical_player_strength + \
             string_numerical_player_strength:
-            exec("""saved_data_dic["{0}"] = self.player.{0}""".format(attribute))
-
+            saved_data_dic[attribute] = self.player.object_data[attribute]
         
         # Save map information and player location.
-        saved_data_dic["object_pos"] = self.player.object_pos
+        saved_data_dic["object_pos"] = self.player.object_data["object_pos"]
         saved_data_dic["map_grid"] = self.original_map_grid
         saved_data_dic["hidden_map_grid"] = self.hidden_map_grid
         saved_data_dic["map_level"] = self.level
@@ -656,7 +662,8 @@ class MainGame(object):
     def _move_player(self,str_direction):
         
         pos_move = direction[arrow_key_to_directions[str_direction]]
-        next_player_pos = (self.player.object_pos[0] + pos_move[0],self.player.object_pos[1] + pos_move[1])
+        next_player_pos = (self.player.object_data["object_pos"][0]+ pos_move[0], \
+            self.player.object_data["object_pos"][1] + pos_move[1])
         
         # If there is a collision, then it will simply draw the map.
         if self.original_map_grid[next_player_pos[0]][next_player_pos[1]] == self.goal_symbol:
@@ -664,7 +671,7 @@ class MainGame(object):
             clear()
 
             # Enemy appears before reaches a goal.
-            if self._enemy_encounter(self.player.luckiness):
+            if self._enemy_encounter(self.player.object_data["luckiness"]):
                 return True
 
             self._move_player_sub(str_direction, next_player_pos)
@@ -678,7 +685,7 @@ class MainGame(object):
         elif self.original_map_grid[next_player_pos[0]][next_player_pos[1]] == self.treasure_symbol:
             clear()
 
-            if self._enemy_encounter(self.player.luckiness):
+            if self._enemy_encounter(self.player.object_data["luckiness"]):
                 return True
 
             self._move_player_sub(str_direction, next_player_pos)
@@ -695,7 +702,7 @@ class MainGame(object):
             self._move_player_sub(str_direction, next_player_pos)
             
             # Draw the enemy encouter screen.
-            if self._enemy_encounter(self.player.luckiness):
+            if self._enemy_encounter(self.player.object_data["luckiness"]):
                 return True
 
             self._draw_hidden_map()
@@ -740,12 +747,12 @@ class MainGame(object):
                 # Yes case --> Initialise map.
                 if cursor_selection == 0:
                     obtained_item = random_item_selection()
-                    self.player.items.append(obtained_item)
+                    self.player.object_data["items"].append(obtained_item)
 
-                    # Remove the treasure from map.
+                    # Remove the treasure from original map.
                     self.original_map_grid[next_player_pos[0]][next_player_pos[1]] = " "
                     self.map_grid = deepcopy(self.original_map_grid)
-                    self.map_grid[next_player_pos[0]][next_player_pos[1]] = self.player.displayed_character
+                    self.map_grid[next_player_pos[0]][next_player_pos[1]] = self.player.object_data["displayed_character"]
                     print("Player obtained {}".format(obtained_item))
                     getch()
                     break
@@ -766,8 +773,8 @@ class MainGame(object):
         
         # Choose the place where the player can begin journey
         chosen_place = choice(space_list_to_place_player)
-        self.map_grid[chosen_place[0]][chosen_place[1]] = self.player.displayed_character
-        self.player.object_pos = chosen_place
+        self.map_grid[chosen_place[0]][chosen_place[1]] = self.player.object_data["displayed_character"]
+        self.player.object_data["object_pos"] = chosen_place
 
     def _randomly_place_objects(self, symbol_to_use):
         

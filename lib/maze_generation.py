@@ -4,20 +4,19 @@ from random import randint
 height_default = 5
 width_default = 5
 
-
-# This game will become Role Playing Game where a person 
-# walks around the maze and fights with foes. Backtracing algorithm is used
-# for generating maze.
-
-# Initialize and create the grid
-# The form of the grid is as follows:
-
+"""
+This game will become Role Playing Game where a person 
+walks around the maze and fights with foes. Backtracing algorithm is used
+for generating maze.
+"""
 # Set direction.
 direction = {"N": (0,-1), "S":(0,1),"E":(1,0), "W":(-1,0)}
 opposite_direction  = {"N":"S", "S":"N", "E":"W", "W":"E"}
-# Firstly, make grid using list.
-# height and width must be positive integer.
 
+"""
+Firstly, make grid using list.
+height and width must be positive integer.
+"""
 
 def make_maze_grid(width = height_default, height = width_default):
 

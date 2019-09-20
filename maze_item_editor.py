@@ -25,6 +25,9 @@ class Application(object):
         # List of parameters that users would like to adjust.
         self.list_of_parameters_right = ["item_name","hp_change", "mp_change", "sp_change", "ep_change", 
         "strength_change", "agility_change", "vitality_change", "dexterity_change", "smartness_change",]
+        
+        self.list_of_parameters_middle_1 = ["is_body_armor", "is_arm","is_leg","is_head","is_wrist","is_ring"]
+        self.list_of_parameters_middle_2 = []
 
         self.list_of_parameters_left = ["magic_power_change","mental_strength_change", "luckiness_change", "effective_time", "durablity_change", "weight"]
         self.start_window()
@@ -54,7 +57,7 @@ class Application(object):
         self.main_group_checkbox = tk.Frame(self.main_list_frame)
         self.main_group_checkbox.grid(row = 0, column = 2, padx = 3, pady = 3, sticky = tk.N)
         
-        self.main_group_list_box_frame = tk.Frame(self.main_list_frame, bg = "red")
+        self.main_group_list_box_frame = tk.Frame(self.main_list_frame)
         self.main_group_list_box_frame.grid(row = 0, column = 3, padx = 3, pady = 3, sticky = tk.NS)
 
 
@@ -73,6 +76,7 @@ class Application(object):
             exec("self.{0}_adjust_label.grid(row = i, sticky = tk.E,column = 0, padx = 3, pady =1)". format(parameter_list))
             exec("self.{0}_input_box = tk.Entry(self.main_group_left)". format(parameter_list))
             exec("self.{0}_input_box.grid(row = i, column = 1, padx = 10, pady =1)". format(parameter_list))
+        
         
         for i,parameter_list in enumerate(self.list_of_parameters_left):
             exec("""self.{0}_adjust_label = tk.Label(self.main_group_right, text = "{0}: " )""". format(parameter_list))

@@ -46,7 +46,7 @@ class Application(object):
         self.main_group_right = tk.Frame(self.main_list_frame)
         self.main_group_right.grid(row = 0, column = 1, padx = 3, pady =3, sticky = tk.N)
 
-        self.main_group_list_box_frame = tk.Frame(self.main_list_frame, bg = "red")
+        self.main_group_list_box_frame = tk.Frame(self.main_list_frame)
         self.main_group_list_box_frame.grid(row = 0, column = 2, padx = 3, pady = 3, sticky = tk.NS)
         
         self.main_group_list_box_scroll = tk.Scrollbar(self.main_group_list_box_frame)
