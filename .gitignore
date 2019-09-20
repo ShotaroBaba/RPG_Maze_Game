@@ -1,0 +1,6 @@
+*.gv
+*.pdf
+*.pyc
+.vscode
+.vs
+savedata

@@ -1,0 +1,53 @@
+{
+    "Goblin": {
+        "hp": 10,
+        "mp": 10,
+        "sp": 10,
+        "ep": 10,
+        "strength": 2,
+        "agility": 1,
+        "vitality": 1,
+        "dexterity": 2,
+        "smartness": 1,
+        "magic_power": 1,
+        "mental_strength": 2,
+        "luckiness": 3,
+        "drop_item": "Potion",
+        "level": 1,
+        "exp": 10
+    },
+    "Bat": {
+        "hp": 15,
+        "mp": 10,
+        "sp": 10,
+        "ep": 10,
+        "strength": 3,
+        "agility": 1,
+        "vitality": 1,
+        "dexterity": 2,
+        "smartness": 1,
+        "magic_power": 1,
+        "mental_strength": 2,
+        "luckiness": 3,
+        "drop_item": "Potion",
+        "level": 1,
+        "exp": 15
+    },
+    "Small dragon": {
+        "hp": 30,
+        "mp": 20,
+        "sp": 20,
+        "ep": 15,
+        "strength": 5,
+        "agility": 5,
+        "vitality": 7,
+        "dexterity": 5,
+        "smartness": 4,
+        "magic_power": 5,
+        "mental_strength": 5,
+        "luckiness": 7,
+        "drop_item": "Potion",
+        "level": 4,
+        "exp": 40
+    }
+}
