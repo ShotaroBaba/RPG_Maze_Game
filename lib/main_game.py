@@ -24,9 +24,11 @@ default_amount_to_reveal = 3
 creature_file_path = os.path.join(data_dir,creature_data_file_name)
 enemy_json = json.loads(open(creature_file_path, "r").read())
 
-# Reads item data for creating the objects.
-# Note: the object will not be create unless it is 
-# the temporary effective items.
+"""
+Reads item data for creating the objects.
+Note: The object will not be create unless it is 
+the temporary effective items.
+"""
 item_data_file_path = os.path.join(data_dir, item_data_file_name)
 item_json = json.loads(open(item_data_file_path, "r").read())
 
@@ -60,7 +62,7 @@ string_numerical_player_strength = ["player_name", "is_living", "is_player",
 non_selected_parameters = ["current_exp","next_exp","level","current_hp", 
                                    "current_mp", "current_sp", "current_ep"]
         
-
+body_parts_list = ["head", "arm","leg","body_armor","right_wrist","left_wrist","right_finger","left_finger"]
 # TODO: Create methods for saving and loading game.
 
 
@@ -73,12 +75,17 @@ def random_item_selection(level = 1):
 
 class MainGame(object):
 
-    # When initialised, Map object puts players and item boxes at the
-    # places.
+    """
+    When initialised, Map object puts players and item boxes at the
+    places.
 
-    # When loading the game the game will
-    # loaded_map: map to be loaded.
-    # loaded_player: player data to be loaded.
+    When loading the game the game will load the following data:
+    loaded_map: map to be loaded.
+    loaded_player: player data to be loaded.
+
+    If not, all the data will be initialized to start the game.
+    """
+    
     def __init__(self, load_data = False):
         
         # Amount to reveal.
@@ -284,21 +291,34 @@ class MainGame(object):
                     print("This feature will be implemented later...")
                     getch()
                     clear()
-
-                # Escape from the enemy.
-                # The rate of the escape depends on the values of
-                # the success.
+                    
+                    """
+                    Escape from the enemy.
+                    The rate of the escape depends on the values of
+                    the success.
+                    """
                 elif cursor_selection == 2:            
                     print("This feature will be implemented later...")
                     getch()
                     clear()
                     break
-
+                
                 elif cursor_selection == 3:
                     print("This feature will be implemented later...")
                     getch()
                     clear()
                     break
+
+                # Escape function.
+                # Escape will be successful if the value is bigger than enemy's.
+                elif cursor_selection == 4:
+                    if uniform(0.8, 1.0)*self.player.agility > uniform(0.2,0.5)* enemy.agility:
+                        print("Player managed to escape...")
+                        break
+                    else:
+                        print("Cannot escape!")
+                        _enemy_turn_normal_attack()
+
             clear()
 
     # TODO: The encounter percentage must be changed
@@ -417,7 +437,7 @@ class MainGame(object):
         clear()
         
         # There is no load function until player moves to exit.
-        selection_list = ["Item", "Save","Status", "Exit"]
+        selection_list = ["Item", "Save","Status", "Equip", "Exit"]
         cursor_not_selected = " "
         cursor_selected = ">"
         tmp_cursor = deepcopy(selection_list)
@@ -456,20 +476,90 @@ class MainGame(object):
                 if cursor_selection == 2:
                     self._display_player_status()
 
+                # Display only the equittable items.
                 if cursor_selection == 3:
-                    clear()
-                    self._draw_hidden_map()
+                    self._display_equitable_items()
+
+                if cursor_selection == 4:  
                     break
 
                 clear()
 
             elif tmp == b"\x1b":
-                clear()
-                self._draw_hidden_map()
                 break
 
             clear()
+        clear()
+        self._draw_hidden_map()
     
+    # Display which item to equip.
+    # When equipping, the player's status is
+    # altered.
+    def _display_equitable_items(self):
+        
+        exit_to_player_menu = ["Exit"]
+        section_selected = ">"
+        section_non_selected = " "
+        selection_idx = 0
+        selection_str_list = body_parts_list + exit_to_player_menu
+        clear()
+
+        while True:
+            
+            tmp = deepcopy(selection_str_list)
+            menu_length = len(tmp)
+            
+            for i in range(menu_length):
+                if selection_idx  == i:
+                    tmp[i] = section_selected + tmp[i]
+                else:
+                    tmp[i] = section_non_selected + tmp[i]
+        
+            print("Status Menu")
+            print("="*30)
+            print("\n".join(tmp))
+            print("="*30)
+            print("Bonus point: {}".format(self.player.bonus_point))
+            
+            tmp = []
+            for i in non_selected_parameters[:3]:
+                tmp.append("{0}: {1}".format(i, eval("self.player.{0}".format(i))))
+        
+            print(" ".join(tmp))
+            
+            tmp = []
+            for i in non_selected_parameters[3:]:
+                tmp.append("{0}: {1}".format(i, eval("self.player.{0}".format(i))))
+                
+            print(" ".join(tmp))
+            ch = getch()
+
+            if ch == b'\r':
+                
+                if selection_idx < 3 and self.player.bonus_point > 0:
+                    exec("self.player.{} += 5".format(selection_str_list[selection_idx]))
+                    self.player.bonus_point -= 1
+                elif selection_idx >= 3 and selection_idx < menu_length - 1 and self.player.bonus_point > 0:
+                    exec("self.player.{} += 1".format(selection_str_list[selection_idx]))
+                    self.player.bonus_point -= 1
+
+                elif selection_idx == menu_length - 1:
+                    break
+            
+            elif ch == "UP_KEY":
+                if selection_idx > 0:
+                    selection_idx -= 1
+                
+            elif ch == "DOWN_KEY":
+                if selection_idx < menu_length - 1:
+                    selection_idx += 1
+            
+            elif ch == b'\x1b':
+                break
+
+            clear()
+        clear()
+        
     def _display_player_status(self):
 
         exit_to_player_menu = ["Exit"]
@@ -477,7 +567,7 @@ class MainGame(object):
         section_selected = ">"
         section_non_selected = " "
         selection_idx = 0
-        selection_str_list = numerical_player_strengh + non_numerical_player_strength + exit_to_player_menu
+        selection_str_list = body_parts_list
         clear()
 
         while True:
@@ -541,6 +631,8 @@ class MainGame(object):
             clear()
         clear()
 
+    def display_equitable_items_sub(self):
+        pass
 
     def _display_item(self):
         
