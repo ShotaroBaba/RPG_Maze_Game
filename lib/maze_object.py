@@ -4,6 +4,7 @@ from random import uniform
 numerical_player_strengh = ["hp", "mp", "sp", "ep"]
 current_numerical_player_strength = ["current_hp", "current_mp", "current_sp", "current_ep"]
 non_numerical_player_strength = ["strength", "agility", "vitality", "dexterity", "smartness", "magic_power", "mental_strength"]   
+equipment_body_part_list  = ["head", "arm", "leg", "body_armor", "right_wrist", "left_wrist", "right_finger", "left_finger"]
 
 # Used for returning a certain value for a certain situation.
 # The enemy strength is decided randomly.
@@ -59,6 +60,19 @@ class MazeObject(object):
         # TODO: Implement luckiness effects
         self.object_data["luckiness"]  = return_json_value_data("luckiness", 10, json_data, level, is_random)
 
+        # Object's parameters
+        self.object_data["current_strength"] = self.object_data["strength"]
+        self.object_data["current_agility"] = self.object_data["agility"]
+        self.object_data["current_vitality"] = self.object_data["vitality"]
+        self.object_data["current_dexterity"] = self.object_data["dexterity"]
+
+        self.object_data["current_smartness"] = self.object_data["smartness"]
+        self.object_data["current_magic_power"] = self.object_data["magic_power"]
+        self.object_data["current_mental_strength"] = self.object_data["mental_strength"]
+
+        # TODO: Implement luckiness effects
+        self.object_data["current_luckiness"]  = self.object_data["luckiness"]
+
 
         # Check whether it is a player, an enemy or just an object
         self.object_data["player_name"]  = json_data["player_name"]\
@@ -73,23 +87,23 @@ class MazeObject(object):
 
         # Show the objects that player equips.
         self.object_data["head"]  = json_data["head"]\
-            if json_data != {} and "head" in json_data.keys() else "Empty"
+            if json_data != {} and "head" in json_data.keys() else {}
         self.object_data["arm"]  =  json_data["arm"]\
-            if json_data != {} and "arm" in json_data.keys() else "Empty"
+            if json_data != {} and "arm" in json_data.keys() else {}
         self.object_data["leg"]  = json_data["leg"]\
-            if json_data != {} and "leg" in json_data.keys() else "Empty"
+            if json_data != {} and "leg" in json_data.keys() else {}
         self.object_data["body_armor"]  = json_data["body_armor"]\
-            if json_data != {} and "body_armor" in json_data.keys() else "Empty"
+            if json_data != {} and "body_armor" in json_data.keys() else {}
 
         
         self.object_data["right_wrist"]  = json_data["right_wrist"]\
-            if json_data != {} and "right_wrist" in json_data.keys() else "Empty"
+            if json_data != {} and "right_wrist" in json_data.keys() else {}
         self.object_data["left_wrist"]  = json_data["left_wrist"]\
-            if json_data != {} and "left_wrist" in json_data.keys() else "Empty"
+            if json_data != {} and "left_wrist" in json_data.keys() else {}
         self.object_data["right_finger"]  = json_data["right_finger"]\
-            if json_data != {} and "right_finger" in json_data.keys() else "Empty"
+            if json_data != {} and "right_finger" in json_data.keys() else {}
         self.object_data["left_finger"]  = json_data["left_finger"]\
-            if json_data != {} and "left_finger" in json_data.keys() else "Empty"
+            if json_data != {} and "left_finger" in json_data.keys() else {}
 
         # Initialise paramteres based on player's equipment.
         self._init_parameters_equipment()
@@ -197,8 +211,15 @@ class MazeObject(object):
     # TODO: Added several features later...
     # Player added
     def update_object(self):
-        self.weight_limit = 10 + int(self.object_data["strength"] // (1.5 + self.object_data["strength"] // 20))
-        
+        # TODO: Add the "weight" function.
+        self.object_data["weight_limit"] = 10 + int(self.object_data["strength"] // (1.5 + self.object_data["strength"] // 20))
+        for i in equipment_body_part_list:
+            if self.object_data != {}:
+                pass
+            else:
+                pass
+
+
     # The system of the calculation of the level
     def _get_experience(self, exp_values):
 

@@ -216,7 +216,9 @@ class MainGame(object):
                 if uniform(0,1.0) > 0.8 - (0.8 / (100 / (self.player.object_data["luckiness"] ** 0.70))):
                     print("Enemy dropped item!")
                     print("The content of the item is {}".format(enemy.object_data["drop_item"]))
-                    self.player.object_data["items"].append(enemy.object_data["drop_item"])
+                    tmp = {}
+                    tmp[enemy.object_data["drop_item"]] = item_json[enemy.object_data["drop_item"]]
+                    self.player.object_data["items"].append(tmp)
                 
                 getch()
                 clear()
@@ -536,7 +538,7 @@ class MainGame(object):
             ch = getch()
 
             if ch == b'\r':
-                
+                # Select only the items labelled as one of body parts.
                 if selection_idx < menu_length:
                     pass
                 elif selection_idx == menu_length - 1:
@@ -563,7 +565,7 @@ class MainGame(object):
         section_selected = ">"
         section_non_selected = " "
         selection_idx = 0
-        selection_str_list = body_parts_list
+        selection_str_list = numerical_player_strengh + non_numerical_player_strength + exit_to_player_menu
         clear()
 
         while True:
@@ -642,7 +644,8 @@ class MainGame(object):
         clear()
 
         while True:
-            selection_str_list = self.player.object_data["items"] + ["Exit"]
+            selection_str_list = list(map(lambda x: list(x.keys())[0],self.player.object_data["items"])) + ["Exit"]\
+                if len(self.player.object_data["items"]) > 0 else ["Exit"] 
             tmp = deepcopy(selection_str_list)
             menu_length = len(tmp)
             for i in range(menu_length):
@@ -671,12 +674,13 @@ class MainGame(object):
 
             if ch == b'\r':
                 
+                
                 if selection_idx < menu_length - 1:
                     # TODO: The temporary effect needs to be considered.
-                    item = {}
-                    item[selection_str_list[selection_idx]] = item_json[selection_str_list[selection_idx]]
+                    item = self.player.object_data["items"][selection_idx]
+                    item_name = list(item.keys())[0]
 
-                    if use_item(self.player, selection_str_list[selection_idx], item):
+                    if use_item(self.player, item_name, item):
                         
                         del self.player.object_data["items"][selection_idx]
 
@@ -832,7 +836,9 @@ class MainGame(object):
                 # Yes case --> Initialise map.
                 if cursor_selection == 0:
                     obtained_item = random_item_selection()
-                    self.player.object_data["items"].append(obtained_item)
+                    tmp = {}
+                    tmp[obtained_item] = item_json[obtained_item]
+                    self.player.object_data["items"].append(tmp)
 
                     # Remove the treasure from original map.
                     self.original_map_grid[next_player_pos[0]][next_player_pos[1]] = " "
