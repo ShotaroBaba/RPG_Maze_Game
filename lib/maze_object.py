@@ -31,7 +31,7 @@ class MazeObject(object):
         self.object_data["level"] = json_data["level"] if json_data != {} else 1
         self.object_data["bonus"]  = json_data["bonus"] if json_data !={} and "bonus" in json_data.keys() else 0
         
-        #Note: maximum points available
+        # Pure basic value for player's status.
         # hp: Hit point
         # mp: Magic point
         # sp: Stamina point
@@ -40,6 +40,17 @@ class MazeObject(object):
         self.object_data["mp"]  = return_json_value_data("mp", 100, json_data, level, is_random)
         self.object_data["sp"] = return_json_value_data("sp", 100, json_data, level, is_random)
         self.object_data["ep"] = return_json_value_data("ep", 100, json_data, level, is_random)
+
+        # Define current max point for player.
+        self.object_data["current_max_hp"] = json_data["current_max_hp"]\
+            if json_data != {} and "current_max_hp" in json_data else self.object_data["hp"]
+        self.object_data["current_max_mp"]  = json_data["current_max_mp"]\
+            if json_data != {} and "current_max_mp" in json_data else self.object_data["mp"]
+        self.object_data["current_max_sp"]  = json_data["current_max_sp"]\
+            if json_data != {} and "current_max_sp" in json_data else self.object_data["sp"]
+        self.object_data["current_max_ep"]  = json_data["current_max_ep"]\
+            if json_data != {} and "current_max_ep" in json_data else self.object_data["ep"]
+
 
         self.object_data["current_hp"] = json_data["current_hp"] if json_data != {} and "current_hp" in json_data else self.object_data["hp"]
         self.object_data["current_mp"]  = json_data["current_mp"] if json_data != {} and "current_hp" in json_data else self.object_data["mp"]
@@ -211,6 +222,7 @@ class MazeObject(object):
     # TODO: Added several features later...
     # Player added
     def update_object(self):
+        
         # TODO: Add the "weight" function.
         self.object_data["weight_limit"] = 10 + int(self.object_data["strength"] // (1.5 + self.object_data["strength"] // 20))
         for i in equipment_body_part_list:
@@ -218,7 +230,6 @@ class MazeObject(object):
                 pass
             else:
                 pass
-
 
     # The system of the calculation of the level
     def _get_experience(self, exp_values):

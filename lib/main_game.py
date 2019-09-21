@@ -498,6 +498,7 @@ class MainGame(object):
     # Display which item to equip.
     # When equipping, the player's status is
     # altered.
+    # TODO: Add the resistance to negative status effects on the players.
     def _display_equitable_items(self):
         
         exit_to_player_menu = ["Exit"]
@@ -526,20 +527,20 @@ class MainGame(object):
             
             tmp = []
             for i in non_selected_parameters[:3]:
-                tmp.append("{0}: {1}".format(i, eval("self.player.{0}".format(i))))
+                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
         
             print(" ".join(tmp))
             
             tmp = []
             for i in non_selected_parameters[3:]:
-                tmp.append("{0}: {1}".format(i, eval("self.player.{0}".format(i))))
+                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
                 
             print(" ".join(tmp))
             ch = getch()
-
+            
             if ch == b'\r':
-                # Select only the items labelled as one of body parts.
-                if selection_idx < menu_length:
+                # TODO: Select only the items labelled as one of body parts.
+                if selection_idx < menu_length - 1:
                     pass
                 elif selection_idx == menu_length - 1:
                     break
@@ -557,7 +558,11 @@ class MainGame(object):
 
             clear()
         clear()
-        
+    
+    # Based on the selected items, the items will be appear.
+    def _display_equitable_items_sub(self, selected_items):
+        pass
+
     def _display_player_status(self):
 
         exit_to_player_menu = ["Exit"]
@@ -631,20 +636,16 @@ class MainGame(object):
             clear()
         clear()
     
-    # Based on the selected items, the items will be appear.
-    def _display_equitable_items_sub(self, selected_items):
-
-        pass
-
     def _display_item(self):
         
         section_selected = ">"
         section_non_selected = " "
         selection_idx = 0
         clear()
+        item_list, other_items = find_item_type(self.player.object_data["items"], "is_item")
 
         while True:
-            selection_str_list = list(map(lambda x: list(x.keys())[0],self.player.object_data["items"])) + ["Exit"]\
+            selection_str_list = extract_item_names(item_list) + ["Exit"]\
                 if len(self.player.object_data["items"]) > 0 else ["Exit"] 
             tmp = deepcopy(selection_str_list)
             menu_length = len(tmp)
@@ -673,16 +674,14 @@ class MainGame(object):
             ch = getch()
 
             if ch == b'\r':
-                
-                
+
                 if selection_idx < menu_length - 1:
                     # TODO: The temporary effect needs to be considered.
-                    item = self.player.object_data["items"][selection_idx]
+                    item = item_list[selection_idx]
                     item_name = list(item.keys())[0]
 
                     if use_item(self.player, item_name, item):
-                        
-                        del self.player.object_data["items"][selection_idx]
+                        del item_list[selection_idx]
 
                 # Exit Item menu.
                 elif selection_idx == menu_length - 1:
@@ -700,6 +699,8 @@ class MainGame(object):
                 break
 
             clear()
+        
+        self.player.object_data["items"] = item_list, other_items
         clear()
 
     # Save player's data and attributes.
