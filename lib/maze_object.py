@@ -98,23 +98,23 @@ class MazeObject(object):
 
         # Show the objects that player equips.
         self.object_data["head"]  = json_data["head"]\
-            if json_data != {} and "head" in json_data.keys() else {}
+            if json_data != {} and "head" in json_data.keys() else []
         self.object_data["arm"]  =  json_data["arm"]\
-            if json_data != {} and "arm" in json_data.keys() else {}
+            if json_data != {} and "arm" in json_data.keys() else []
         self.object_data["leg"]  = json_data["leg"]\
-            if json_data != {} and "leg" in json_data.keys() else {}
+            if json_data != {} and "leg" in json_data.keys() else []
         self.object_data["body_armor"]  = json_data["body_armor"]\
-            if json_data != {} and "body_armor" in json_data.keys() else {}
+            if json_data != {} and "body_armor" in json_data.keys() else []
 
         
         self.object_data["right_wrist"]  = json_data["right_wrist"]\
-            if json_data != {} and "right_wrist" in json_data.keys() else {}
+            if json_data != {} and "right_wrist" in json_data.keys() else []
         self.object_data["left_wrist"]  = json_data["left_wrist"]\
-            if json_data != {} and "left_wrist" in json_data.keys() else {}
+            if json_data != {} and "left_wrist" in json_data.keys() else []
         self.object_data["right_finger"]  = json_data["right_finger"]\
-            if json_data != {} and "right_finger" in json_data.keys() else {}
+            if json_data != {} and "right_finger" in json_data.keys() else []
         self.object_data["left_finger"]  = json_data["left_finger"]\
-            if json_data != {} and "left_finger" in json_data.keys() else {}
+            if json_data != {} and "left_finger" in json_data.keys() else []
 
         # Initialise paramteres based on player's equipment.
         self._init_parameters_equipment()

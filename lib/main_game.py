@@ -517,12 +517,19 @@ class MainGame(object):
             menu_length = len(tmp)
             
             for i in range(menu_length):
-                if selection_idx  == i:
-                    tmp[i] = section_selected + tmp[i]
+                if i < menu_length - 1:
+                    if selection_idx  == i:
+                        tmp[i] = section_selected + tmp[i] + ": {}".format(self.player.object_data[tmp[i]] if\
+                            self.player.object_data[tmp[i]] != [] else "None")
+                    else:
+                        tmp[i] = section_non_selected + tmp[i] + ": {}".format(self.player.object_data[tmp[i]] if\
+                            self.player.object_data[tmp[i]] != [] else "None")
                 else:
-                    tmp[i] = section_non_selected + tmp[i]
-        
-            print("Status Menu")
+                    if selection_idx  == i:
+                        tmp[i] = section_selected + tmp[i]
+                    else:
+                        tmp[i] = section_non_selected + tmp[i]
+            print("Equipment Menu")
             print("="*30)
             print("\n".join(tmp))
             print("="*30)
@@ -532,24 +539,24 @@ class MainGame(object):
             for i in non_selected_parameters[:3]:
                 tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
         
-            print(" ".join(tmp))
+            print("|".join(tmp))
             
             tmp = []
             for i in non_selected_parameters[3:]:
                 tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
                 
-            print(" ".join(tmp))
+            print("|".join(tmp))
             ch = getch()
             
             if ch == b'\r':
                 # TODO: Select only the items labelled as one of body parts.
                 if selection_idx < menu_length - 1:
                     if "wrist" in body_parts_list[selection_idx]:
-                        self._display_equitable_items_sub("wrist")
+                        self._display_equitable_items_sub("wrist", body_parts_list[selection_idx])
                     elif "finger" in body_parts_list[selection_idx]:
-                        self._display_equitable_items_sub("ring")
+                        self._display_equitable_items_sub("ring", body_parts_list[selection_idx])
                     else:
-                        self._display_equitable_items_sub(body_parts_list[selection_idx])
+                        self._display_equitable_items_sub(body_parts_list[selection_idx], body_parts_list[selection_idx])
                     
                 elif selection_idx == menu_length - 1:
                     break
@@ -569,20 +576,21 @@ class MainGame(object):
         clear()
     
     # The item 
-    def _display_equitable_items_sub(self, selected_item_type):
+    def _display_equitable_items_sub(self, selected_item_type, item_type_for_display):
         
-        exit_to_player_menu = ["Exit"]
+        exit_and_unequip_to_player_menu = ["Unequip", "Exit"]
         section_selected = ">"
         section_non_selected = " "
         selection_idx = 0
-        selection_str_list = body_parts_list + exit_to_player_menu
+        selection_str_list = body_parts_list + exit_and_unequip_to_player_menu
         clear()
 
         item_list, other_items = find_item_type(self.player.object_data["items"], selected_item_type)
-
+        
         while True:
-            selection_str_list = extract_item_names(item_list) + ["Exit"]\
-                if item_list != [] else ["Exit"] 
+            selection_str_list = extract_item_names(item_list) + exit_and_unequip_to_player_menu\
+                if item_list != [] else exit_and_unequip_to_player_menu
+            selection_str_list = selection_str_list
             
             tmp = deepcopy(selection_str_list)
             menu_length = len(tmp)
@@ -593,11 +601,16 @@ class MainGame(object):
                 else:
                     tmp[i] = section_non_selected + tmp[i]
         
-            print("Status Menu")
+            print("Equipment Menu")
             print("="*30)
-            print("\n".join(tmp))
+            print("\n".join(tmp)) 
+            print("="*30)
+            print("Current Equipment: {}".format(self.player.object_data[item_type_for_display]
+            if self.player.object_data[item_type_for_display] != [] else "None"))
             print("="*30)
             print("Bonus point: {}".format(self.player.object_data["bonus_point"]))
+            print("="*30)
+            
             
             tmp = []
             for i in non_selected_parameters[:3]:
@@ -610,12 +623,14 @@ class MainGame(object):
                 tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
                 
             print(" ".join(tmp))
-            ch = getch()
-            
+            ch = getch()            
+
             if ch == b'\r':
                 # Equip the item by inserting the data to the corresponding part of dictionary.
                 # TODO: Select only the items labelled as one of body parts.
-                if selection_idx < menu_length - 1:
+                if selection_idx < menu_length - 2:
+                    pass
+                elif selection_idx == menu_length - 2:
                     pass
                 elif selection_idx == menu_length - 1:
                     break
@@ -653,10 +668,8 @@ class MainGame(object):
             for i in range(menu_length):
                 if i < menu_length -1:
                     if selection_idx  == i:
-                        # tmp[i] = section_selected + tmp[i] + ": "+ str(eval("self.player.{}".format(tmp[i])))
                         tmp[i] = section_selected + tmp[i] + ": "+ str(self.player.object_data[tmp[i]])
                     else:
-                        # tmp[i] = section_non_selected + tmp[i] + ": "+ str(eval("self.player.{}".format(tmp[i])))
                         tmp[i] = section_non_selected + tmp[i] + ": "+ str(self.player.object_data[tmp[i]])
                 else:
                     if selection_idx  == i:

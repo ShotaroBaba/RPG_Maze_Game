@@ -55,8 +55,8 @@ def use_item(player,item_name,item_data):
     return hp_changed or mp_changed or sp_changed or ep_changed
 
     
-    # Equip item for player.
-    # All item data is different.
-    # Equip the 
-    def equip_item(player, item_data):
-        pass
+# Equip item for player.
+# All item data is different.
+# Equip the 
+def equip_item(player, item_data):
+    pass
