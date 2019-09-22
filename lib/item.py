@@ -7,18 +7,21 @@
 def extract_item_names(item_data):
     return list(map(lambda x: list(x.keys())[0],item_data))
 
+# Sort items based on the item types.
+def sort_items(self):
+    pass
 
 # Find the items to list based on item_type.
 def find_item_type(item_data, item_type):
 
     tmp_items = []
     other_items = []
-
-    for i,item_type in enumerate(list(map(lambda x: x[list(x.keys())[0]][item_type], item_data))):
-        if item_type:
-            tmp_items.append(item_data[i])
-        else:
-            other_items.append(item_data[i])
+    if item_data != []:
+        for i,item_type in enumerate(list(map(lambda x: x[list(x.keys())[0]]["is_" + item_type], item_data))):
+            if item_type:
+                tmp_items.append(item_data[i])
+            else:
+                other_items.append(item_data[i])
 
     return tmp_items, other_items
 

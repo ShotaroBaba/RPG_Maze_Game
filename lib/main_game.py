@@ -379,6 +379,9 @@ class MainGame(object):
         
         self.player.object_data["current_ep"] = max(self.player.object_data["current_ep"] - 1, 0)
 
+        # TODO: Implement update player.
+
+
         # if the current ep is zero. the current hp will decreases.
         if self.player.object_data["current_ep"] == 0:
             self.player.object_data["current_hp"] = max(self.player.object_data["current_hp"] - 1, 1)
@@ -541,7 +544,13 @@ class MainGame(object):
             if ch == b'\r':
                 # TODO: Select only the items labelled as one of body parts.
                 if selection_idx < menu_length - 1:
-                    pass
+                    if "wrist" in body_parts_list[selection_idx]:
+                        self._display_equitable_items_sub("wrist")
+                    elif "finger" in body_parts_list[selection_idx]:
+                        self._display_equitable_items_sub("ring")
+                    else:
+                        self._display_equitable_items_sub(body_parts_list[selection_idx])
+                    
                 elif selection_idx == menu_length - 1:
                     break
             
@@ -559,9 +568,73 @@ class MainGame(object):
             clear()
         clear()
     
-    # Based on the selected items, the items will be appear.
-    def _display_equitable_items_sub(self, selected_items):
-        pass
+    # The item 
+    def _display_equitable_items_sub(self, selected_item_type):
+        
+        exit_to_player_menu = ["Exit"]
+        section_selected = ">"
+        section_non_selected = " "
+        selection_idx = 0
+        selection_str_list = body_parts_list + exit_to_player_menu
+        clear()
+
+        item_list, other_items = find_item_type(self.player.object_data["items"], selected_item_type)
+
+        while True:
+            selection_str_list = extract_item_names(item_list) + ["Exit"]\
+                if item_list != [] else ["Exit"] 
+            
+            tmp = deepcopy(selection_str_list)
+            menu_length = len(tmp)
+            
+            for i in range(menu_length):
+                if selection_idx  == i:
+                    tmp[i] = section_selected + tmp[i]
+                else:
+                    tmp[i] = section_non_selected + tmp[i]
+        
+            print("Status Menu")
+            print("="*30)
+            print("\n".join(tmp))
+            print("="*30)
+            print("Bonus point: {}".format(self.player.object_data["bonus_point"]))
+            
+            tmp = []
+            for i in non_selected_parameters[:3]:
+                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
+        
+            print(" ".join(tmp))
+            
+            tmp = []
+            for i in non_selected_parameters[3:]:
+                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
+                
+            print(" ".join(tmp))
+            ch = getch()
+            
+            if ch == b'\r':
+                # Equip the item by inserting the data to the corresponding part of dictionary.
+                # TODO: Select only the items labelled as one of body parts.
+                if selection_idx < menu_length - 1:
+                    pass
+                elif selection_idx == menu_length - 1:
+                    break
+            
+            elif ch == "UP_KEY":
+                if selection_idx > 0:
+                    selection_idx -= 1
+                
+            elif ch == "DOWN_KEY":
+                if selection_idx < menu_length - 1:
+                    selection_idx += 1
+            
+            elif ch == b'\x1b':
+                break
+
+            clear()
+        self.player.object_data["items"] = item_list + other_items
+        clear()
+    
 
     def _display_player_status(self):
 
@@ -642,7 +715,7 @@ class MainGame(object):
         section_non_selected = " "
         selection_idx = 0
         clear()
-        item_list, other_items = find_item_type(self.player.object_data["items"], "is_item")
+        item_list, other_items = find_item_type(self.player.object_data["items"], "item")
 
         while True:
             selection_str_list = extract_item_names(item_list) + ["Exit"]\
@@ -700,7 +773,7 @@ class MainGame(object):
 
             clear()
         
-        self.player.object_data["items"] = item_list, other_items
+        self.player.object_data["items"] = item_list + other_items
         clear()
 
     # Save player's data and attributes.
