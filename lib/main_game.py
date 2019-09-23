@@ -539,13 +539,13 @@ class MainGame(object):
             for i in non_selected_parameters[:3]:
                 tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
         
-            print("|".join(tmp))
+            print(" ".join(tmp))
             
             tmp = []
             for i in non_selected_parameters[3:]:
                 tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
                 
-            print("|".join(tmp))
+            print(" ".join(tmp))
             ch = getch()
             
             if ch == b'\r':
@@ -575,7 +575,9 @@ class MainGame(object):
             clear()
         clear()
     
-    # The item 
+    # The item
+    # selected_item_type: item type to be equipped.
+    # equipped item 
     def _display_equitable_items_sub(self, selected_item_type, item_type_for_display):
         
         exit_and_unequip_to_player_menu = ["Unequip", "Exit"]
@@ -605,12 +607,9 @@ class MainGame(object):
             print("="*30)
             print("\n".join(tmp)) 
             print("="*30)
-            print("Current Equipment: {}".format(self.player.object_data[item_type_for_display]
+            print("Current Equipment: {}".format(list(self.player.object_data[item_type_for_display].keys())[0]
             if self.player.object_data[item_type_for_display] != [] else "None"))
             print("="*30)
-            print("Bonus point: {}".format(self.player.object_data["bonus_point"]))
-            print("="*30)
-            
             
             tmp = []
             for i in non_selected_parameters[:3]:
@@ -628,10 +627,19 @@ class MainGame(object):
             if ch == b'\r':
                 # Equip the item by inserting the data to the corresponding part of dictionary.
                 # TODO: Select only the items labelled as one of body parts.
+                # Equip the item for player.
                 if selection_idx < menu_length - 2:
-                    pass
+                    self.player.object_data[item_type_for_display] = item_list[selection_idx]
+                    del item_list[selection_idx]
+
                 elif selection_idx == menu_length - 2:
-                    pass
+                    if self.player.object_data[item_type_for_display] != []:
+                        item_list += [self.player.object_data[item_type_for_display]]
+                        # Unequip the item by putting [] on the data.
+                        # TODO: Implement the update of the player's status every time
+                        # equipment is stripped or worn
+                        self.player.object_data[item_type_for_display] = []
+                    
                 elif selection_idx == menu_length - 1:
                     break
             

@@ -5,7 +5,10 @@
 #     def __init__(self, item_name,json_data = {}, level = 1):
 
 def extract_item_names(item_data):
-    return list(map(lambda x: list(x.keys())[0],item_data))
+    if item_data != []:
+        return list(map(lambda x: list(x.keys())[0],item_data))
+    else:
+        return []
 
 # Sort items based on the item types.
 def sort_items(self):
