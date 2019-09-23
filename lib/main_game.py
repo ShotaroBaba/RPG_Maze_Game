@@ -58,6 +58,11 @@ string_numerical_player_strength = ["player_name", "is_living", "is_player",
                                     "max_item_hold", "exp", "current_exp", "bonus_point", "next_exp", "items",
                                     "skills", "rank", "drop_item"]
 
+non_numerical_current_player_strength =   ["current_strength", "current_agility", "current_vitality", "current_dexterity",
+                                           "current_smartness", "current_magic_power", "current_mental_strength", "current_luckiness"]
+
+current_maximum_player_strength = ["current_max_hp", "current_max_mp", "current_max_sp", "current_max_ep"]
+
 # These parameters will not be selected in the selection menu.
 non_selected_parameters = ["current_exp","next_exp","level","current_hp", 
                                    "current_mp", "current_sp", "current_ep"]
@@ -202,7 +207,7 @@ class MainGame(object):
         # TODO: Take player's luckiness into account.
         def _player_turn_normal_attack():
             # Player turn
-            player_base_attack_value = self.player.object_data["strength"]
+            player_base_attack_value = self.player.object_data["current_strength"]
             player_attack_value = int(round(uniform(0.8,1.0) * player_base_attack_value, 0))
             enemy.object_data["current_hp"] -= player_attack_value
             
@@ -213,7 +218,7 @@ class MainGame(object):
                 self.player._get_experience(enemy.object_data["exp"])
                 
                 # If it is bigger, then the enemy will drop the 
-                if uniform(0,1.0) > 0.8 - (0.8 / (100 / (self.player.object_data["luckiness"] ** 0.70))):
+                if uniform(0,1.0) > 0.8 - (0.8 / (100 / (self.player.object_data["current_luckiness"] ** 0.70))):
                     print("Enemy dropped item!")
                     print("The content of the item is {}".format(enemy.object_data["drop_item"]))
                     tmp = {}
@@ -230,7 +235,7 @@ class MainGame(object):
 
         def _enemy_turn_normal_attack():
             # Enemy turn
-            enemy_base_attack_value = enemy.object_data["strength"]
+            enemy_base_attack_value = enemy.object_data["current_strength"]
             enemy_attack_value = int(round(uniform(0.8,1.0) * enemy_base_attack_value, 0))
             self.player.object_data["current_hp"]  -= enemy_attack_value
             
@@ -379,12 +384,13 @@ class MainGame(object):
         
         self.player.object_data["current_ep"] = max(self.player.object_data["current_ep"] - 1, 0)
 
-        # TODO: Implement update player.
-
 
         # if the current ep is zero. the current hp will decreases.
         if self.player.object_data["current_ep"] == 0:
             self.player.object_data["current_hp"] = max(self.player.object_data["current_hp"] - 1, 1)
+
+        # Update player's abilities every time the player make movement.
+        self.player.update_object()
 
     # Allows the users to select whether they will proceed to the next floor...
     def _map_proceed_selection(self):
@@ -519,10 +525,10 @@ class MainGame(object):
             for i in range(menu_length):
                 if i < menu_length - 1:
                     if selection_idx  == i:
-                        tmp[i] = section_selected + tmp[i] + ": {}".format(self.player.object_data[tmp[i]] if\
+                        tmp[i] = section_selected + tmp[i] + ": {}".format(list(self.player.object_data[tmp[i]].keys())[0] if\
                             self.player.object_data[tmp[i]] != [] else "None")
                     else:
-                        tmp[i] = section_non_selected + tmp[i] + ": {}".format(self.player.object_data[tmp[i]] if\
+                        tmp[i] = section_non_selected + tmp[i] + ": {}".format(list(self.player.object_data[tmp[i]])[0] if\
                             self.player.object_data[tmp[i]] != [] else "None")
                 else:
                     if selection_idx  == i:
@@ -631,6 +637,7 @@ class MainGame(object):
                 if selection_idx < menu_length - 2:
                     self.player.object_data[item_type_for_display] = item_list[selection_idx]
                     del item_list[selection_idx]
+                    self.player.update_object()
 
                 elif selection_idx == menu_length - 2:
                     if self.player.object_data[item_type_for_display] != []:
@@ -639,7 +646,8 @@ class MainGame(object):
                         # TODO: Implement the update of the player's status every time
                         # equipment is stripped or worn
                         self.player.object_data[item_type_for_display] = []
-                    
+                        self.player.update_object()
+
                 elif selection_idx == menu_length - 1:
                     break
             
@@ -689,6 +697,11 @@ class MainGame(object):
             print("="*30)
             print("\n".join(tmp))
             print("="*30)
+
+            tmp = []
+            print("\n".join(["{0}: {1}".format(x, str(self.player.object_data[x]))
+            for x in current_maximum_player_strength + non_numerical_current_player_strength]))
+            print("="*30)
             print("Bonus point: {}".format(self.player.object_data["bonus_point"]))
             
             tmp = []
@@ -727,7 +740,11 @@ class MainGame(object):
             elif ch == b'\x1b':
                 break
 
+            self.player.update_object()
             clear()
+        
+        # Just in case to prevent the errors.
+        self.player.update_object()
         clear()
     
     def _display_item(self):
@@ -895,6 +912,7 @@ class MainGame(object):
             clear()
             self._draw_hidden_map()
     
+    # NOTE: The item drop is completely random.
     def _treasure_selection(self, next_player_pos):
          # Allows the users to select whether they will proceed to the next floor...
         

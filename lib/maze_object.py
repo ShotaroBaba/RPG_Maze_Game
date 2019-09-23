@@ -3,7 +3,12 @@ from random import uniform
 
 numerical_player_strengh = ["hp", "mp", "sp", "ep"]
 current_numerical_player_strength = ["current_hp", "current_mp", "current_sp", "current_ep"]
-non_numerical_player_strength = ["strength", "agility", "vitality", "dexterity", "smartness", "magic_power", "mental_strength"]   
+current_maximum_player_strength = ["current_max_hp", "current_max_mp", "current_max_sp", "current_max_ep"]
+
+non_numerical_player_strength = ["strength", "agility", "vitality", "dexterity", "smartness", "magic_power", "mental_strength", "luckiness"] 
+non_numerical_current_player_strength =   ["current_strength", "current_agility", "current_vitality", "current_dexterity",
+                                           "current_smartness", "current_magic_power", "current_mental_strength", "current_luckiness"]
+
 equipment_body_part_list  = ["head", "arm", "leg", "body_armor", "right_wrist", "left_wrist", "right_finger", "left_finger"]
 
 # Used for returning a certain value for a certain situation.
@@ -67,8 +72,6 @@ class MazeObject(object):
         self.object_data["smartness"] = return_json_value_data("smartness", 10, json_data, level, is_random)
         self.object_data["magic_power"] = return_json_value_data("magic_power", 10, json_data, level, is_random)
         self.object_data["mental_strength"] = return_json_value_data("mental_strength", 10, json_data, level, is_random)
-
-        # TODO: Implement luckiness effects
         self.object_data["luckiness"]  = return_json_value_data("luckiness", 10, json_data, level, is_random)
 
         # Object's parameters
@@ -80,10 +83,15 @@ class MazeObject(object):
         self.object_data["current_smartness"] = self.object_data["smartness"]
         self.object_data["current_magic_power"] = self.object_data["magic_power"]
         self.object_data["current_mental_strength"] = self.object_data["mental_strength"]
-
-        # TODO: Implement luckiness effects
         self.object_data["current_luckiness"]  = self.object_data["luckiness"]
 
+
+        self.object_data["poison_resist"] = json_data["poison_resist"]\
+            if json_data != {} and "poison_resist" in json_data.keys() else 0
+        self.object_data["paralyze_resist"] = json_data["paralyze_resist"]\
+            if json_data != {} and "paralyze_resist" in json_data.keys() else 0
+        self.object_data["curse_resist"] = json_data["curse_resist"]\
+            if json_data != {} and "curse_resist" in json_data.keys() else 0
 
         # Check whether it is a player, an enemy or just an object
         self.object_data["player_name"]  = json_data["player_name"]\
@@ -169,12 +177,16 @@ class MazeObject(object):
             if json_data != {} and "skills" in json_data.keys() else []
 
         # Rank that can be used for adjusting the random encounter in dungeon.
+        # TODO: Implement the idea of rank.
         self.object_data["rank"]  = json_data["rank"]\
             if json_data != {} and "rank" in json_data.keys() else {}
 
         # The monster will drop the item
         self.object_data["drop_item"]  = json_data["drop_item"]\
             if json_data != {} and "drop_item" in json_data.keys() else {}
+
+        self.object_data["skills"] = json_data["skills"]\
+            if json_data != {} and "skills" in json_data.keys() else []
 
     # Apply skills to a certain person, enemy or items
     # NOTE: Skills will be a set of json data.
@@ -222,15 +234,28 @@ class MazeObject(object):
     # TODO: Added several features later...
     # Player added
     def update_object(self):
+
+        # Initialise before assigning the value...
+        for j in numerical_player_strengh + non_numerical_player_strength:
+            self.object_data["current_" + j] = self.object_data[j]
         
         # TODO: Add the "weight" function.
         self.object_data["weight_limit"] = 10 + int(self.object_data["strength"] // (1.5 + self.object_data["strength"] // 20))
+        
+        # For each body part list
         for i in equipment_body_part_list:
-            if self.object_data != {}:
-                pass
-            else:
-                pass
-
+            
+            # Firstly, initialise the value.
+            for j in numerical_player_strengh + non_numerical_player_strength:
+                
+                # if the body part is not empty, then...
+                if self.object_data[i] != []:
+                    item_name = list(self.object_data[i].keys())[0]
+                    self.object_data["current_" + j] = self.object_data[j] + self.object_data[i][item_name][j + "_change"] 
+                # If it is, do nothing.
+                else:
+                    pass
+                
     # The system of the calculation of the level
     def _get_experience(self, exp_values):
 
@@ -262,3 +287,5 @@ class MazeObject(object):
                 
             # The formula for calculating the experice for leveling up player.
             self.object_data["next_exp"] = 50 + int(round(50 * (0.5 * (self.object_data["level"] ** (constant_next_level_exp))))) - remain
+
+            self.player.update_object()
