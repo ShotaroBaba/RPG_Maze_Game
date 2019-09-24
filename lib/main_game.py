@@ -68,13 +68,9 @@ non_selected_parameters = ["current_exp","next_exp","level","current_hp",
                                    "current_mp", "current_sp", "current_ep"]
         
 body_parts_list = ["head", "arm","leg","body_armor","right_wrist","left_wrist","right_finger","left_finger"]
-# TODO: Create methods for saving and loading game.
-
-
 # The map for players to walk at the beginning
-# TODO: Change Map name to a proper name
 
-# TODO: Differentiate the apprearance of the items based on the level.
+# Randomly select the items from the list based on the item's list and level....
 def random_item_selection(level = 1):
     return choice(list(item_json.keys()))
 
@@ -391,6 +387,9 @@ class MainGame(object):
 
         # Update player's abilities every time the player make movement.
         self.player.update_object()
+
+        # This methods is used only when player moves.
+        self.player.move_update_object()
 
     # Allows the users to select whether they will proceed to the next floor...
     def _map_proceed_selection(self):

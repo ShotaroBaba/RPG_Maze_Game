@@ -58,9 +58,9 @@ class MazeObject(object):
 
 
         self.object_data["current_hp"] = json_data["current_hp"] if json_data != {} and "current_hp" in json_data else self.object_data["hp"]
-        self.object_data["current_mp"]  = json_data["current_mp"] if json_data != {} and "current_hp" in json_data else self.object_data["mp"]
-        self.object_data["current_sp"]  = json_data["current_sp"] if json_data != {} and "current_hp" in json_data else self.object_data["sp"]
-        self.object_data["current_ep"]  = json_data["current_ep"] if json_data != {} and "current_hp" in json_data else self.object_data["ep"]
+        self.object_data["current_mp"]  = json_data["current_mp"] if json_data != {} and "current_sp" in json_data else self.object_data["mp"]
+        self.object_data["current_sp"]  = json_data["current_sp"] if json_data != {} and "current_mp" in json_data else self.object_data["sp"]
+        self.object_data["current_ep"]  = json_data["current_ep"] if json_data != {} and "current_ep" in json_data else self.object_data["ep"]
 
 
         # Object's parameters
@@ -234,28 +234,58 @@ class MazeObject(object):
     # TODO: Added several features later...
     # Player added
     def update_object(self):
+        
+        ##################################
+        # Initialization part
+        ##################################
+        # Initialise weight limit.
+        self.object_data["weight"] = 0
 
         # Initialise before assigning the value...
-        for j in numerical_player_strengh + non_numerical_player_strength:
+        for j in numerical_player_strengh:
+            self.object_data["current_max_" + j] = self.object_data[j]
+        
+        for j in non_numerical_player_strength:
             self.object_data["current_" + j] = self.object_data[j]
         
-        # TODO: Add the "weight" function.
-        self.object_data["weight_limit"] = 10 + int(self.object_data["strength"] // (1.5 + self.object_data["strength"] // 20))
-        
+        ##################################
+        # Calculation part.
+        ##################################
         # For each body part list
         for i in equipment_body_part_list:
             
-            # Firstly, initialise the value.
-            for j in numerical_player_strengh + non_numerical_player_strength:
-                
-                # if the body part is not empty, then...
-                if self.object_data[i] != []:
+            
+            # if the body part is not empty, then...
+            if self.object_data[i] != []:
+                # Firstly, initialise the value.
+                for j in numerical_player_strengh:
                     item_name = list(self.object_data[i].keys())[0]
-                    self.object_data["current_" + j] = self.object_data[j] + self.object_data[i][item_name][j + "_change"] 
-                # If it is, do nothing.
-                else:
-                    pass
+                    self.object_data["current_max_" + j] += self.object_data[i][item_name][j + "_change"]
                 
+                for j in non_numerical_player_strength:
+                    item_name = list(self.object_data[i].keys())[0]
+                    self.object_data["current_" + j] += self.object_data[i][item_name][j + "_change"]
+
+                
+                self.object_data["weight"] +=  self.object_data[i][item_name]["weight"]
+
+
+        # TODO: Add the "weight" function.
+        # By default, the player has 20 base + strength unit.
+        self.object_data["weight_limit"] = 10 + int(self.object_data["strength"] // (1.5 + self.object_data["strength"] // 20))
+
+        for i in range(len(self.object_data["items"])):
+            item_in_list = self.object_data["items"][i]
+            item_name = list(item_in_list.keys())[0]
+
+            self.object_data["weight"] +=  self.object_data["items"][i][item_name]["weight"]
+
+    
+    def move_update_object(self):
+        # If exceed the limit, the hp continues to decrease until the weight losses into a certain amount.
+        self.object_data["current_hp"] -= max(self.object_data["weight"] - self.object_data["weight_limit"], 0)
+
+
     # The system of the calculation of the level
     def _get_experience(self, exp_values):
 
@@ -288,4 +318,4 @@ class MazeObject(object):
             # The formula for calculating the experice for leveling up player.
             self.object_data["next_exp"] = 50 + int(round(50 * (0.5 * (self.object_data["level"] ** (constant_next_level_exp))))) - remain
 
-            self.player.update_object()
+            self.update_object()
