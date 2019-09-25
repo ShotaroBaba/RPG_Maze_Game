@@ -1,0 +1,20 @@
+{
+    "Cure": {
+        "attribute": "neutral",
+        "hp_change": 30,
+        "mp_change": -20,
+        "sp_change": -5,
+        "ep_change": -1,
+        "strength_change": 0,
+        "agility_change": 0,
+        "vitality_change": 0,
+        "dexterity_change": 0,
+        "smartness_change": 0,
+        "magic_power_change": 0,
+        "mental_strength_change": 0,
+        "luckiness_change": 0,
+        "effective_time": 0,
+        "durablity_change": 0,
+        "weight": 0
+    }
+}
