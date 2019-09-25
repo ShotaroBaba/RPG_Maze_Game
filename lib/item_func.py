@@ -1,6 +1,7 @@
 # TODO: Implement temporary status changes.
 # TODO: Power up the items as the level goes up...
-
+from random import choice
+from functools import reduce
 # class Item(object):
 #     def __init__(self, item_name,json_data = {}, level = 1):
 
@@ -10,24 +11,46 @@ def extract_item_names(item_data):
     else:
         return []
 
-# Sort items based on the item types.
-def sort_items(self):
+# Sort items based on the item types by name.
+def sort_items(item_data):
     pass
 
-# Find the items to list based on item_type.
-def find_item_type(item_data, item_type):
+def reduce_item_data(one_item, item_types):
 
+    if len(item_types) > 1:
+        return reduce(lambda x, y: one_item[list(one_item.keys())[0]]["is_" + x] 
+                    or one_item[list(one_item.keys())[0]]["is_" + y], item_types)
+    else:
+        return one_item[list(one_item.keys())[0]]["is_" + item_types[0]]
+
+# Find the items to list based on item_type.
+def find_item_type(item_data, item_types):
+
+    # If the item type is a string, then it will become [string]
+    if isinstance(item_types, str):
+        item_types = [item_types]
+    
     tmp_items = []
     other_items = []
-    if item_data != []:
-        for i,item_type in enumerate(list(map(lambda x: x[list(x.keys())[0]]["is_" + item_type], item_data))):
-            if item_type:
-                tmp_items.append(item_data[i])
-            else:
-                other_items.append(item_data[i])
+
+    for i,item_type in enumerate(map(lambda x: reduce_item_data(x, item_types), item_data)):
+        if item_type:
+            tmp_items.append(item_data[i])
+        else:
+            other_items.append(item_data[i])
 
     return tmp_items, other_items
 
+# The skill book gives player to create the 
+# Randomly select the skills from skill list.
+# Skills are randomly selected based on the book level.
+# When a skill book is used, he/she can obtain one skill randomly.
+# Player cannot choose his/her skills from skill books.
+def use_skill_book(skill_data, book_level = 1):
+
+    # Filter the skill based on the depth of the floor.
+    filtered_skill_data = filter(lambda x: x[list(x.keys())[0]]["level"] <= book_level, skill_data)
+    return choice(filtered_skill_data)
 
 # Use item for player.
 def use_item(player,item_name,item_data):
@@ -60,6 +83,5 @@ def use_item(player,item_name,item_data):
     
 # Equip item for player.
 # All item data is different.
-# Equip the 
 def equip_item(player, item_data):
     pass
