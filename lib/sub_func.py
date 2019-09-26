@@ -1,9 +1,15 @@
 # TODO: Implement temporary status changes.
 # TODO: Power up the items as the level goes up...
 from random import choice
+from random import uniform
 from functools import reduce
+from getch import _Getch
+
+getch = _Getch()
 # class Item(object):
 #     def __init__(self, item_name,json_data = {}, level = 1):
+strength_parameters =["strength", "agility", "vitality", "dexterity",
+                      "smartness", "magic_power", "mental_strength", "luckiness"]
 
 def extract_item_names(item_data):
     if item_data != []:
@@ -48,16 +54,17 @@ def find_item_type(item_data, item_types):
 # Player cannot choose his/her skills from skill books.
 def use_skill_book(skill_data, book_level = 1):
     # Filter the skill based on the depth of the floor.
-    filtered_skill_data = filter(lambda x: x[list(x.keys())[0]]["level"] <= book_level, skill_data)
-    return choice(filtered_skill_data)
+    itemized_skill_data = skill_data.items()
+    filtered_skill_data = list(filter(lambda x: x[1]["level"] <= book_level, itemized_skill_data))
+    return dict((choice(filtered_skill_data),))
 
 def filter_monster(monster_data, floor_level = 1):
-    filtered_monster_data = filter(lambda x: x[list(x.keys())[0]]["level"] <= floor_level, monster_data)
-    return choice(filtered_monster_data)
+    filtered_monster_data = list(filter(lambda x: x[list(x.keys())[0]]["level"] <= floor_level, monster_data))
+    return dict(choice(filtered_monster_data))
 
 def filter_item_data(item_data, floor_level = 1):
-    filtered_item_data = filter(lambda x: x[list(x.keys())[0]]["level"] <= floor_level, item_data)
-    return choice(filtered_item_data)
+    filtered_item_data = list(filter(lambda x: x[1]["level"] <= floor_level, item_data.items()))
+    return dict((choice(filtered_item_data),))
 
 # Use item for player.
 def use_item(player,item_name,item_data):
@@ -87,7 +94,103 @@ def use_item(player,item_name,item_data):
 
     return hp_changed or mp_changed or sp_changed or ep_changed
 
+def use_skill(player, skill_data, target_object = None, is_in_menu = True):
     
+    # TODO: Do not use item when a current value is the same as a maximum value
+    skill_name = list(skill_data.keys())[0]
+
+    if is_in_menu and skill_data[skill_name]["is_in_fight"]:
+        print("This skill cannot be used in the player's menu.")
+        getch()
+        return False
+    
+    # TODO: Add the status effects on the player.
+    elif not skill_data[skill_name]["is_in_fight"]:
+        if (player.object_data["current_hp"] - skill_data[skill_name]["hp_spent"] >= 0 
+        or skill_data[skill_name]["hp_spent"] == 0)\
+        and (player.object_data["current_mp"] - skill_data[skill_name]["mp_spent"] >= 0 
+        or skill_data[skill_name]["mp_spent"] == 0)\
+        and (player.object_data["current_sp"] - skill_data[skill_name]["sp_spent"] >= 0 
+        or skill_data[skill_name]["sp_spent"] == 0)\
+        and (player.object_data["current_ep"] - skill_data[skill_name]["ep_spent"] >= 0 
+        or skill_data[skill_name]["ep_spent"] == 0):
+        
+            if (player.object_data["current_hp"] != player.object_data["current_max_hp"] 
+            and skill_data[skill_name]["hp_change"] != 0)\
+            or (player.object_data["current_mp"] != player.object_data["current_max_mp"] 
+            and skill_data[skill_name]["mp_change"] != 0)\
+            or (player.object_data["current_sp"] != player.object_data["current_max_sp"] 
+            and skill_data[skill_name]["sp_change"] != 0)\
+            or (player.object_data["current_ep"] != player.object_data["current_max_ep"] 
+            and skill_data[skill_name]["ep_change"] != 0):
+
+                player.object_data["current_hp"] = min(player.object_data["current_hp"] + 
+                use_skill_sub(player, skill_data, skill_data[skill_name]["hp_change"]),
+                player.object_data["current_max_hp"])
+                player.object_data["current_mp"] = min(player.object_data["current_mp"] + 
+                use_skill_sub(player, skill_data, skill_data[skill_name]["mp_change"]),
+                player.object_data["current_max_mp"])
+                player.object_data["current_sp"] = min(player.object_data["current_sp"] + 
+                use_skill_sub(player, skill_data, skill_data[skill_name]["sp_change"]),
+                player.object_data["current_max_sp"])
+                player.object_data["current_ep"] = min(player.object_data["current_ep"] + 
+                use_skill_sub(player, skill_data, skill_data[skill_name]["ep_change"]),
+                player.object_data["current_max_ep"])
+                player.object_data["current_hp"]  -= skill_data[skill_name]["hp_spent"]
+                player.object_data["current_mp"]  -= skill_data[skill_name]["mp_spent"]
+                player.object_data["current_sp"]  -= skill_data[skill_name]["sp_spent"]
+                player.object_data["current_ep"]  -= skill_data[skill_name]["ep_spent"] 
+            
+                return True
+    
+    # Player can be the person who receive the damage from enemy.
+    # TODO: Add the status effects on the enemy.
+    # If player is in fight, then it will perform the attack against enemy.
+    elif skill_data[skill_name]["is_in_fight"] and target_object != None:
+        if (player.object_data["current_hp"] - skill_data[skill_name]["hp_spent"] >= 0 
+        or skill_data[skill_name]["hp_spent"] == 0)\
+        and (player.object_data["current_mp"] - skill_data[skill_name]["mp_spent"] >= 0 
+        or skill_data[skill_name]["mp_spent"] == 0)\
+        and (player.object_data["current_sp"] - skill_data[skill_name]["sp_spent"] >= 0 
+        or skill_data[skill_name]["sp_spent"] == 0)\
+        and (player.object_data["current_ep"] - skill_data[skill_name]["ep_spent"] >= 0 
+        or skill_data[skill_name]["ep_spent"] == 0):
+            
+            target_object.object_data["current_hp"] = min(target_object.object_data["current_hp"] + 
+            use_skill_sub(player, skill_data, skill_data[skill_name]["hp_change"]),
+            target_object.object_data["current_max_hp"])
+            
+            target_object.object_data["current_mp"] = min(target_object.object_data["current_mp"] + 
+            use_skill_sub(player, skill_data, skill_data[skill_name]["mp_change"]),
+            target_object.object_data["current_max_mp"])
+            
+            target_object.object_data["current_sp"] = min(target_object.object_data["current_sp"] + 
+            use_skill_sub(player, skill_data, skill_data[skill_name]["sp_change"]),
+            target_object.object_data["current_max_sp"])
+
+            target_object.object_data["current_ep"] = min(target_object.object_data["current_ep"] + 
+            use_skill_sub(player, skill_data, skill_data[skill_name]["ep_change"]),
+            target_object.object_data["current_max_ep"])
+
+            player.object_data["current_hp"]  -= skill_data[skill_name]["hp_spent"]
+            player.object_data["current_mp"]  -= skill_data[skill_name]["mp_spent"]
+            player.object_data["current_sp"]  -= skill_data[skill_name]["sp_spent"]
+            player.object_data["current_ep"]  -= skill_data[skill_name]["ep_spent"] 
+                
+            return True
+
+
+# Return the value in accordance with the changes of the values.
+# TODO: Add the multiplier to the skills.
+def use_skill_sub(player,skill_data,changed_value):
+
+    tmp = changed_value
+    tmp_name = list(skill_data.keys())[0]
+    for i in strength_parameters:
+        tmp += changed_value * (uniform(1.0, 1.5) * (player.object_data["current_" + i] * skill_data[tmp_name][i + "_multiplier"]))
+    
+    return int(round(tmp,0))
+
 # Equip item for player.
 # All item data is different.
 def equip_item(player, item_data):
