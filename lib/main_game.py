@@ -100,7 +100,6 @@ class MainGame(object):
 
         self.width = width
         self.height = height
-        
 
         # Set the symbols below this line:
         self.goal_symbol = "\033[93m" + "G" + "\033[0m"
@@ -219,7 +218,7 @@ class MainGame(object):
                 print("Press any key to return to map...")
                 self.player._get_experience(enemy.object_data["exp"])
                 
-                # If it is bigger, then the enemy will drop the 
+                # If it is bigger, then the enemy will drop an item.
                 if uniform(0,1.0) > 0.8 - (0.8 / (100 / (self.player.object_data["current_luckiness"] ** 0.70))):
                     print("Enemy dropped item!")
                     print("The content of the item is {}".format(enemy.object_data["drop_item"]))
@@ -301,23 +300,23 @@ class MainGame(object):
                     print("This feature will be implemented later...")
                     getch()
                     clear()
-                    
                     """
                     Escape from the enemy.
                     The rate of the escape depends on the values of
                     the success.
                     """
+
                 elif cursor_selection == 2:            
                     print("This feature will be implemented later...")
                     getch()
                     clear()
-                    break
+                    
                 
                 elif cursor_selection == 3:
                     print("This feature will be implemented later...")
                     getch()
                     clear()
-                    break
+                    
 
                 # Escape function.
                 # Escape will be successful if the value is bigger than enemy's.
@@ -606,7 +605,7 @@ class MainGame(object):
                             del item_list[selection_idx]
                     elif item[item_name]["is_skill_book"]:
                         # Put the skills on the player if the skill slot is not beyond the skills.
-                        self.player.object_data["skills"].append(use_skill_book(item, item[item_name]["level"]))
+                        self.player.object_data["skills"].append(use_skill_book(skill_json, item[item_name]["level"]))
                         del item_list[selection_idx]
 
                 # Exit Item menu.
@@ -716,9 +715,9 @@ class MainGame(object):
         section_non_selected = " "
         selection_idx = 0
         clear()
-
+        
         while True:
-            selection_str_list = self.player.object_data["skills"] + ["Exit"]\
+            selection_str_list = extract_item_names(self.player.object_data["skills"]) + ["Exit"]\
                 if len(self.player.object_data["skills"]) > 0 else ["Exit"] 
             tmp = deepcopy(selection_str_list)
             menu_length = len(tmp)
@@ -749,18 +748,8 @@ class MainGame(object):
             if ch == b'\r':
                 
                 if selection_idx < menu_length - 1:
-                    # # TODO: The temporary effect needs to be considered.
-                    # item = item_list[selection_idx]
-                    # item_name = list(item.keys())[0]
-
-                    # if item[item_name]["is_item"]:
-                    #     if use_item(self.player, item_name, item):
-                    #         del item_list[selection_idx]
-                    # elif item[item_name]["is_skill_book"]:
-                    #     # Put the skills on the player if the skill slot is not beyond the skills.
-                    #     self.player.object_data["skills"].append(use_skill_book(item))
-                    #     del item_list[selection_idx]
-                    pass
+                    # The function that will use player's skills
+                    use_skill(self.player, self.player.object_data["skills"][selection_idx])
 
                 # Exit Item menu.
                 elif selection_idx == menu_length - 1:
