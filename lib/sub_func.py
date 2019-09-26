@@ -47,10 +47,17 @@ def find_item_type(item_data, item_types):
 # When a skill book is used, he/she can obtain one skill randomly.
 # Player cannot choose his/her skills from skill books.
 def use_skill_book(skill_data, book_level = 1):
-
     # Filter the skill based on the depth of the floor.
     filtered_skill_data = filter(lambda x: x[list(x.keys())[0]]["level"] <= book_level, skill_data)
     return choice(filtered_skill_data)
+
+def filter_monster(monster_data, floor_level = 1):
+    filtered_monster_data = filter(lambda x: x[list(x.keys())[0]]["level"] <= floor_level, monster_data)
+    return choice(filtered_monster_data)
+
+def filter_item_data(item_data, floor_level = 1):
+    filtered_item_data = filter(lambda x: x[list(x.keys())[0]]["level"] <= floor_level, item_data)
+    return choice(filtered_item_data)
 
 # Use item for player.
 def use_item(player,item_name,item_data):

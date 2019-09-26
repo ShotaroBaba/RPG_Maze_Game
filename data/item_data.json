@@ -22,7 +22,8 @@
         "luckiness_change": 0,
         "effective_time": 0,
         "durablity_change": 0,
-        "weight": 1
+        "weight": 1,
+        "level": 1
     },
     "Bread": {
         "is_item": true,
@@ -47,7 +48,8 @@
         "luckiness_change": 0,
         "effective_time": 0,
         "durablity_change": 0,
-        "weight": 1
+        "weight": 1,
+        "level": 1
     },
     "Bronze armor": {
         "is_item": false,
@@ -72,7 +74,8 @@
         "luckiness_change": 0,
         "effective_time": 0,
         "durablity_change": 0,
-        "weight": 3
+        "weight": 3,
+        "level": 1
     },
     "Bronze arm": {
         "is_item": false,
@@ -97,7 +100,8 @@
         "luckiness_change": 0,
         "effective_time": 0,
         "durablity_change": 0,
-        "weight": 2
+        "weight": 2,
+        "level": 1
     },
     "Bronze leggings": {
         "is_item": false,
@@ -122,7 +126,8 @@
         "luckiness_change": 0,
         "effective_time": 0,
         "durablity_change": 0,
-        "weight": 2
+        "weight": 2,
+        "level": 1
     },
     "Bronze head": {
         "is_item": false,
@@ -147,7 +152,8 @@
         "luckiness_change": 0,
         "effective_time": 0,
         "durablity_change": 0,
-        "weight": 1
+        "weight": 1,
+        "level": 1
     },
     "Bronze wrist": {
         "is_item": false,
@@ -172,7 +178,8 @@
         "luckiness_change": 3,
         "effective_time": 0,
         "durablity_change": 0,
-        "weight": 1
+        "weight": 1,
+        "level": 1
     },
     "Bronze ring": {
         "is_item": false,
@@ -197,7 +204,8 @@
         "luckiness_change": 2,
         "effective_time": 0,
         "durablity_change": 0,
-        "weight": 1
+        "weight": 1,
+        "level": 1
     },
     "Bronze skill book": {
         "is_item": false,
@@ -222,6 +230,7 @@
         "luckiness_change": 0,
         "effective_time": 0,
         "durablity_change": 0,
-        "weight": 1
+        "weight": 1,
+        "level": 1
     }
 }

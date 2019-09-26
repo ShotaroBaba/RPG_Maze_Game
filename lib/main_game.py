@@ -15,7 +15,7 @@ from maze_generation import generate_maze_grid, make_maze_grid
 from random import random
 from maze_object import MazeObject
 from default_values import *
-from item_func import *
+from sub_func import *
 
 # The value which determine the difficulty of level increase.
 constant_next_level_exp = 1.4
@@ -515,6 +515,123 @@ class MainGame(object):
         clear()
         self._draw_hidden_map()
     
+    # The function which allows player to dispose items.
+    # TODO: Enable the scroll of the item.
+    def _dispose_item(self, previous_str):
+        selection_list = ["Yes", "No"]
+        cursor_not_selected = " "
+        cursor_selected = ">"
+        tmp_cursor = deepcopy(selection_list)
+        cursor_selection = 1
+        
+        while True:
+            clear()
+            for i in range(len(tmp_cursor)):
+                if i == cursor_selection:
+                    tmp_cursor[i] = cursor_selected + tmp_cursor[i]
+                else:
+                    tmp_cursor[i] = cursor_not_selected + tmp_cursor[i]
+            
+            print(previous_str)
+            print("Will you dispose the selected item?")
+            print("".join(tmp_cursor))
+            tmp_cursor = deepcopy(selection_list)
+            tmp = getch()
+            if tmp == "LEFT_KEY":
+                if cursor_selection > 0:
+                        cursor_selection -= 1
+                
+            elif tmp == "RIGHT_KEY":
+                if cursor_selection < len(tmp_cursor) - 1:
+                        cursor_selection += 1
+
+            elif tmp == b"\r":
+                # Yes case --> Initialise map.
+                if cursor_selection == 0:
+                    return True
+                
+                # No case --> Do nothing.
+                if cursor_selection == 1:
+                    return False
+            clear()
+        clear()
+        pass
+
+    def _display_item(self):
+        
+        section_selected = ">"
+        section_non_selected = " "
+        selection_idx = 0
+        clear()
+        item_list, other_items = find_item_type(self.player.object_data["items"], ["item", "skill_book"])
+        while True:
+            selection_str_list = extract_item_names(item_list) + ["Exit"]\
+                if len(self.player.object_data["items"]) > 0 else ["Exit"] 
+            tmp = deepcopy(selection_str_list)
+            menu_length = len(tmp)
+            for i in range(menu_length):
+                if selection_idx  == i:
+                    tmp[i] = section_selected + tmp[i] 
+                else:
+                    tmp[i] = section_non_selected + tmp[i] 
+
+            displayed_str = "Equipment Menu\n" +\
+            "="*30+"\n" +\
+            "\n".join(tmp) + "\n" +\
+            "="*30+"\n" +\
+            "Bonus point: {}".format(self.player.object_data["bonus_point"]) + "\n"
+
+            tmp = []
+            for i in non_selected_parameters[:3]:
+                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
+            
+            displayed_str +=  " ".join(tmp) + "\n"
+            
+            tmp = []
+            for i in non_selected_parameters[3:]:
+                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))    
+            displayed_str +=  " ".join(tmp) + "\n"
+            print(displayed_str)
+            ch = getch()
+
+            if ch == b'\r':
+
+                if selection_idx < menu_length - 1:
+                    # TODO: The temporary effect needs to be considered.
+                    item = item_list[selection_idx]
+                    item_name = list(item.keys())[0]
+
+                    if item[item_name]["is_item"]:
+                        if use_item(self.player, item_name, item):
+                            del item_list[selection_idx]
+                    elif item[item_name]["is_skill_book"]:
+                        # Put the skills on the player if the skill slot is not beyond the skills.
+                        self.player.object_data["skills"].append(use_skill_book(item, item[item_name]["level"]))
+                        del item_list[selection_idx]
+
+                # Exit Item menu.
+                elif selection_idx == menu_length - 1:
+                    break
+            
+            elif ch == "UP_KEY":
+                if selection_idx > 0:
+                    selection_idx -= 1
+                
+            elif ch == "DOWN_KEY":
+                if selection_idx < menu_length - 1:
+                    selection_idx += 1
+            
+            elif ch == b"d" or ch == b"D":
+                if self._dispose_item(displayed_str):
+                    del item_list[selection_idx]
+
+            elif ch == b'\x1b':
+                break
+
+            clear()
+        self.player.object_data["items"] = item_list + other_items
+        clear()
+
     # Display which item to equip.
     # When equipping, the player's status is
     # altered.
@@ -546,24 +663,26 @@ class MainGame(object):
                         tmp[i] = section_selected + tmp[i]
                     else:
                         tmp[i] = section_non_selected + tmp[i]
-            print("Equipment Menu")
-            print("="*30)
-            print("\n".join(tmp))
-            print("="*30)
-            print("Bonus point: {}".format(self.player.object_data["bonus_point"]))
             
+            displayed_str = "Equipment Menu\n" +\
+            "="*30+"\n" +\
+            "\n".join(tmp) + "\n" +\
+            "="*30+"\n" +\
+            "Bonus point: {}".format(self.player.object_data["bonus_point"]) + "\n"
+
             tmp = []
             for i in non_selected_parameters[:3]:
                 tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
-        
-            print(" ".join(tmp))
+            
+            displayed_str +=  " ".join(tmp) + "\n"
             
             tmp = []
             for i in non_selected_parameters[3:]:
-                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
-                
-            print(" ".join(tmp))
+                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))    
+            print(displayed_str)
             ch = getch()
+            displayed_str +=  " ".join(tmp) + "\n"
+
             
             if ch == b'\r':
                 # TODO: Select only the items labelled as one of body parts.
@@ -585,7 +704,7 @@ class MainGame(object):
             elif ch == "DOWN_KEY":
                 if selection_idx < menu_length - 1:
                     selection_idx += 1
-            
+
             elif ch == b'\x1b':
                 break
 
@@ -654,7 +773,7 @@ class MainGame(object):
             elif ch == "DOWN_KEY":
                 if selection_idx < menu_length - 1:
                     selection_idx += 1
-            
+
             elif ch == b'\x1b':
                 break
 
@@ -720,15 +839,17 @@ class MainGame(object):
 
                     self.player.object_data[item_type_for_display] = item_list[selection_idx]
                     del item_list[selection_idx]
+
                     self.player.update_object()
 
                 elif selection_idx == menu_length - 2:
                     if self.player.object_data[item_type_for_display] != []:
-                        item_list += [self.player.object_data[item_type_for_display]]
+                        tmp_item = self.player.object_data[item_type_for_display]
                         # Unequip the item by putting [] on the data.
                         # TODO: Implement the update of the player's status every time
                         # equipment is stripped or worn
                         self.player.object_data[item_type_for_display] = []
+                        item_list += [tmp_item]
                         self.player.update_object()
 
                 elif selection_idx == menu_length - 1:
@@ -742,6 +863,10 @@ class MainGame(object):
                 if selection_idx < menu_length - 1:
                     selection_idx += 1
             
+            elif ch == b"d" or ch == b"D":
+                if self._dispose_item(""):
+                    del item_list[selection_idx]
+
             elif ch == b'\x1b':
                 break
 
@@ -830,76 +955,7 @@ class MainGame(object):
         self.player.update_object()
         clear()
     
-    def _display_item(self):
-        
-        section_selected = ">"
-        section_non_selected = " "
-        selection_idx = 0
-        clear()
-        item_list, other_items = find_item_type(self.player.object_data["items"], ["item", "skill_book"])
-        while True:
-            selection_str_list = extract_item_names(item_list) + ["Exit"]\
-                if len(self.player.object_data["items"]) > 0 else ["Exit"] 
-            tmp = deepcopy(selection_str_list)
-            menu_length = len(tmp)
-            for i in range(menu_length):
-                if selection_idx  == i:
-                    tmp[i] = section_selected + tmp[i] 
-                else:
-                    tmp[i] = section_non_selected + tmp[i] 
-
-            print("="*30)
-            print("\n".join(tmp))
-            print("="*30)
-            print("Bonus point: {}".format(self.player.object_data["bonus_point"]))
-            
-            tmp = []
-            for i in non_selected_parameters[:3]:
-                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
-        
-            print(" ".join(tmp))
-            
-            tmp = []
-            for i in non_selected_parameters[3:]:
-                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
-                
-            print(" ".join(tmp))
-            ch = getch()
-
-            if ch == b'\r':
-
-                if selection_idx < menu_length - 1:
-                    # TODO: The temporary effect needs to be considered.
-                    item = item_list[selection_idx]
-                    item_name = list(item.keys())[0]
-
-                    if item[item_name]["is_item"]:
-                        if use_item(self.player, item_name, item):
-                            del item_list[selection_idx]
-                    elif item[item_name]["is_skill_book"]:
-                        # Put the skills on the player if the skill slot is not beyond the skills.
-                        self.player.object_data["skills"].append(use_skill_book(item))
-                        del item_list[selection_idx]
-
-                # Exit Item menu.
-                elif selection_idx == menu_length - 1:
-                    break
-            
-            elif ch == "UP_KEY":
-                if selection_idx > 0:
-                    selection_idx -= 1
-                
-            elif ch == "DOWN_KEY":
-                if selection_idx < menu_length - 1:
-                    selection_idx += 1
-            
-            elif ch == b'\x1b':
-                break
-
-            clear()
-        self.player.object_data["items"] = item_list + other_items
-        clear()
-
+ 
     # Save player's data and attributes.
     def save_data(self):
         # The value for storing player data.

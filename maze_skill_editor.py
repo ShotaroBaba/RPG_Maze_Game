@@ -36,7 +36,7 @@ class Application(object):
         self.list_of_parameters_middle_2 = ["cure_poison","cure_paralyze","cure_curse","cure_all_status"]
         
         # Temporary status change during the battle.
-        self.list_of_parameters_left = ["magic_power_change","mental_strength_change", "luckiness_change", "effective_time", "durablity_change", "weight"]
+        self.list_of_parameters_left = ["magic_power_change","mental_strength_change", "luckiness_change", "effective_time", "durablity_change", "weight", "level"]
         self.start_window()
 
     # The list of parameters that users would like to adjust for creating monsters.
@@ -169,11 +169,17 @@ class Application(object):
     
         for parameter_list in self.list_of_parameters_right[1:]:
             exec("self.{0}_input_box.delete(0,tk.END)".format(parameter_list))
-            exec("self.{0}_input_box.insert(0,{1})".format(parameter_list,self.skill_list[value][parameter_list]))
+            try:
+                exec("self.{0}_input_box.insert(0,{1})".format(parameter_list,self.skill_list[value][parameter_list]))
+            except:
+                exec("self.{0}_input_box.insert(0,{1})".format(parameter_list,0))
         
         for parameter_list in self.list_of_parameters_left:
             exec("self.{0}_input_box.delete(0,tk.END)".format(parameter_list))
-            exec("self.{0}_input_box.insert(0,{1})".format(parameter_list,self.skill_list[value][parameter_list]))
+            try:
+                exec("self.{0}_input_box.insert(0,{1})".format(parameter_list,self.skill_list[value][parameter_list]))
+            except:
+                exec("self.{0}_input_box.insert(0,{1})".format(parameter_list,0))
 
         try:
             self.middle_radio_button_value_1.set(self.skill_list[value]["attribute"])
