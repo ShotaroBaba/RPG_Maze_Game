@@ -105,6 +105,8 @@ class MazeObject(object):
         
 
         # Show the objects that player equips.
+        self.object_data["hand"]  = json_data["hand"]\
+            if json_data != {} and "hand" in json_data.keys() else []
         self.object_data["head"]  = json_data["head"]\
             if json_data != {} and "head" in json_data.keys() else []
         self.object_data["arm"]  =  json_data["arm"]\

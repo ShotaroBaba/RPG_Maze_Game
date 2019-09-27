@@ -1,6 +1,7 @@
 {
     "Potion": {
         "is_item": true,
+        "is_weapon": false,
         "is_body_armor": false,
         "is_arm": false,
         "is_leg": false,
@@ -27,6 +28,7 @@
     },
     "Bread": {
         "is_item": true,
+        "is_weapon": false,
         "is_body_armor": false,
         "is_arm": false,
         "is_leg": false,
@@ -53,6 +55,7 @@
     },
     "Bronze armor": {
         "is_item": false,
+        "is_weapon": false,
         "is_body_armor": true,
         "is_arm": false,
         "is_leg": false,
@@ -79,6 +82,7 @@
     },
     "Bronze arm": {
         "is_item": false,
+        "is_weapon": false,
         "is_body_armor": false,
         "is_arm": true,
         "is_leg": false,
@@ -105,6 +109,7 @@
     },
     "Bronze leggings": {
         "is_item": false,
+        "is_weapon": false,
         "is_body_armor": false,
         "is_arm": false,
         "is_leg": true,
@@ -131,6 +136,7 @@
     },
     "Bronze head": {
         "is_item": false,
+        "is_weapon": false,
         "is_body_armor": false,
         "is_arm": false,
         "is_leg": false,
@@ -157,6 +163,7 @@
     },
     "Bronze wrist": {
         "is_item": false,
+        "is_weapon": false,
         "is_body_armor": false,
         "is_arm": false,
         "is_leg": false,
@@ -183,6 +190,7 @@
     },
     "Bronze ring": {
         "is_item": false,
+        "is_weapon": false,
         "is_body_armor": false,
         "is_arm": false,
         "is_leg": false,
@@ -209,6 +217,7 @@
     },
     "Bronze skill book": {
         "is_item": false,
+        "is_weapon": false,
         "is_body_armor": false,
         "is_arm": false,
         "is_leg": false,
@@ -232,5 +241,59 @@
         "durablity_change": 0,
         "weight": 1,
         "level": 1
+    },
+    "Tonic": {
+        "is_item": true,
+        "is_weapon": false,
+        "is_body_armor": false,
+        "is_arm": false,
+        "is_leg": false,
+        "is_head": false,
+        "is_wrist": false,
+        "is_ring": false,
+        "is_skill_book": false,
+        "hp_change": 0,
+        "mp_change": 50,
+        "sp_change": 10,
+        "ep_change": 0,
+        "strength_change": 0,
+        "agility_change": 0,
+        "vitality_change": 0,
+        "dexterity_change": 0,
+        "smartness_change": 0,
+        "magic_power_change": 0,
+        "mental_strength_change": 0,
+        "luckiness_change": 0,
+        "effective_time": 0,
+        "durablity_change": 0,
+        "weight": 1,
+        "level": 1
+    },
+    "Bronze sword": {
+        "is_item": false,
+        "is_weapon": true,
+        "is_body_armor": false,
+        "is_arm": false,
+        "is_leg": false,
+        "is_head": false,
+        "is_wrist": false,
+        "is_ring": false,
+        "is_skill_book": false,
+        "hp_change": 0,
+        "mp_change": 0,
+        "sp_change": 0,
+        "ep_change": 0,
+        "strength_change": 20,
+        "agility_change": 3,
+        "vitality_change": 3,
+        "dexterity_change": 0,
+        "smartness_change": 0,
+        "magic_power_change": 0,
+        "mental_strength_change": 0,
+        "luckiness_change": 0,
+        "effective_time": 0,
+        "durablity_change": 0,
+        "weight": 1,
+        "level": 3
     }
 }

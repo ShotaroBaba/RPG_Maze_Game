@@ -29,6 +29,7 @@ class Application(object):
         
         self.list_of_parameters_middle_1 =[
         ("is_item", "is_item"),
+        ("is_weapon", "is_weapon"),
         ("is_body_armor", "is_body_armor"),
         ("is_arm","is_arm"),
         ("is_leg", "is_leg"),

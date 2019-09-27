@@ -22,7 +22,6 @@ constant_next_level_exp = 1.4
 default_amount_to_reveal = 3
 # Load creatures.
 
-
 """
 Reads item data for creating the objects.
 Note: The object will not be create unless it is 
@@ -73,7 +72,7 @@ current_maximum_player_strength = ["current_max_hp", "current_max_mp", "current_
 non_selected_parameters = ["current_exp","next_exp","level","current_hp", 
                                    "current_mp", "current_sp", "current_ep"]
         
-body_parts_list = ["head", "arm","leg","body_armor","right_wrist","left_wrist","right_finger","left_finger"]
+body_parts_list = ["hand","head", "arm","leg","body_armor","right_wrist","left_wrist","right_finger","left_finger"]
 # The map for players to walk at the beginning
 
 # Randomly select the items from the list based on the item's list and level....
@@ -209,9 +208,17 @@ class MainGame(object):
         def _player_turn_normal_attack():
             # Player turn
             player_base_attack_value = self.player.object_data["current_strength"]
-            player_attack_value = int(round(uniform(0.8,1.0) * player_base_attack_value, 0))
-            enemy.object_data["current_hp"] -= player_attack_value
+            enemy_durability = enemy.object_data["current_vitality"]
+
+            player_attack_value = int(round(uniform(0.8,1.0) *(player_base_attack_value - (0.2 * enemy_durability)), 0))
+
             
+            # Determine whether an attack is hit.
+            if (uniform(0.1, 1.0) * self.player.object_data["current_dexterity"]) > (uniform(0 ,0.2) * enemy.object_data["current_agility"]):
+                enemy.object_data["current_hp"]  -= max(player_attack_value, 0)
+            else:
+                print("You missed the attack!")
+
             if enemy.object_data["current_hp"]  < 1:
                 print("You defeated the creature!")
                 print("Player acquire {} exp".format(enemy.object_data["exp"]))
@@ -233,13 +240,19 @@ class MainGame(object):
                 print("Player delivers {} damage".format(player_attack_value))
                 getch()
                 return False
-
+        
+        # TODO: Allow enemy to use their skills.
         def _enemy_turn_normal_attack():
             # Enemy turn
             enemy_base_attack_value = enemy.object_data["current_strength"]
-            enemy_attack_value = int(round(uniform(0.8,1.0) * enemy_base_attack_value, 0))
-            self.player.object_data["current_hp"]  -= enemy_attack_value
-            
+            player_durability = self.player.object_data["current_vitality"]
+            enemy_attack_value = int(round(uniform(0.8,1.0) *(enemy_base_attack_value - (0.2 * player_durability)), 0))
+
+            # Determine whether an attack is hit.
+            if (uniform(0.1, 1.0) * enemy.object_data["current_dexterity"]) > (uniform(0 ,0.2) * self.player.object_data["current_agility"]):
+                self.player.object_data["current_hp"]  -= max(enemy_attack_value, 0)
+            else:
+                print("Enemy missed the attack!")
             if self.player.object_data["current_hp"]  < 1:
                 print("You are defeated...")
                 print("Game Over...")
@@ -251,7 +264,57 @@ class MainGame(object):
                 print("Enemy delivers {} damage".format(enemy_attack_value))
                 getch()
                 return False
-
+        
+        # NOTE: Enemy use the skill randomly.
+        # TODO: Both enemy and player can use the same function.
+        def _player_turn_use_skill(skill_data, user, opponents, is_enemy = False, message = "player"):
+            
+            hp_change, mp_change, sp_change, ep_change, is_player = use_skill(user,skill_data, opponents, False)
+            
+            print("Player use skill")
+            if not is_enemy and enemy.object_data["current_hp"]  < 1:
+                print("You defeated the creature!")
+                print("Player acquire {} exp".format(enemy.object_data["exp"]))
+                print("Press any key to return to map...")
+                user._get_experience(enemy.object_data["exp"])
+                
+                # If it is bigger, then the enemy will drop an item.
+                if uniform(0,1.0) > 0.8 - (0.8 / (100 / (user.object_data["current_luckiness"] ** 0.70))):
+                    print("Enemy dropped item!")
+                    print("The content of the item is {}".format(enemy.object_data["drop_item"]))
+                    tmp = {}
+                    tmp[enemy.object_data["drop_item"]] = item_json[enemy.object_data["drop_item"]]
+                    user.object_data["items"].append(tmp)
+                
+                getch()
+                clear()
+                return True
+            
+            else:
+                if is_player:
+                    if hp_change > 0:
+                        print("{} gained {} point(s)".format(message,hp_change))
+                    if mp_change > 0:
+                        print("{} gained {} mp point(s)".format(message,mp_change))
+                    if sp_change > 0:
+                        print("{} gained {} sp point(s)".format(message,sp_change))
+                    if ep_change > 0:
+                        print("{} gained {} ep point(s)".format(message, ep_change))
+                    getch()
+                
+                # TODO: Remove abs.
+                else:
+                    if hp_change > 0:
+                        print("{} delivers {} damage".format(message, hp_change))
+                    if mp_change > 0:
+                        print("{} delivers {} mp damage".format(message, mp_change))
+                    if sp_change > 0:
+                        print("{} delivers {} sp damage".format(message, sp_change))
+                    if ep_change > 0:
+                        print("{} delivers {} ep damage".format(message, ep_change))
+                    getch()
+                
+                return False
 
         # Displayed for generating 
         while True:
@@ -296,16 +359,30 @@ class MainGame(object):
                     
                 # TODO: Create the function that handles player's skills.
                 # Displays the player's status.
-                elif cursor_selection == 1:    
-                    print("This feature will be implemented later...")
-                    getch()
+                elif cursor_selection == 1:
+                    skill_data = self._display_skills(True)
+                    if skill_data != None: 
+
+                        # Turn based fight. The player can firstly fight for the enemy this value is higher.
+                        if uniform(0.8, 1.0)*self.player.object_data["agility"] > uniform(0.8,1.0)* enemy.object_data["agility"]:
+                            if _player_turn_use_skill(skill_data,self.player, enemy):
+                                break
+                            if _enemy_turn_normal_attack():
+                                return True
+                        else:
+                            if _enemy_turn_normal_attack():
+                                return True
+                            if _player_turn_use_skill(skill_data,self.player, enemy):
+                                break
+                        getch()
+
                     clear()
                     """
                     Escape from the enemy.
                     The rate of the escape depends on the values of
                     the success.
                     """
-
+                # TODO: Enable player to use item.
                 elif cursor_selection == 2:            
                     print("This feature will be implemented later...")
                     getch()
@@ -323,13 +400,14 @@ class MainGame(object):
                 elif cursor_selection == 4:
                     if uniform(0.8, 1.0)* self.player.object_data["agility"] > uniform(0.2,0.5)* enemy.object_data["agility"]:
                         print("Player managed to escape...")
+                        getch()
                         break
                     else:
                         print("Cannot escape!")
                         _enemy_turn_normal_attack()
 
             clear()
-
+        clear()
     # TODO: The encounter percentage must be changed
     # Take the luck of the player into account.
     def _enemy_encounter(self, player_luck_value):
@@ -365,7 +443,6 @@ class MainGame(object):
     
     # Reveal the grid of the map based on the player's location.
     def _reveal_map_grid(self):
-
         for i in range(max(0, self.player.object_data["object_pos"][0] - self.default_amount_to_reveal),\
             min(self.player.object_data["object_pos"][0] + self.default_amount_to_reveal, len(self.map_grid[0]))):
             for j in range(max(0, self.player.object_data["object_pos"][1] - self.default_amount_to_reveal),\
@@ -686,7 +763,9 @@ class MainGame(object):
             if ch == b'\r':
                 # TODO: Select only the items labelled as one of body parts.
                 if selection_idx < menu_length - 1:
-                    if "wrist" in body_parts_list[selection_idx]:
+                    if "hand" in body_parts_list[selection_idx]:
+                        self._display_equitable_items_sub("weapon", "weapon")
+                    elif "wrist" in body_parts_list[selection_idx]:
                         self._display_equitable_items_sub("wrist", body_parts_list[selection_idx])
                     elif "finger" in body_parts_list[selection_idx]:
                         self._display_equitable_items_sub("ring", body_parts_list[selection_idx])
@@ -709,69 +788,7 @@ class MainGame(object):
 
             clear()
         clear()
-    
-    def _display_skills(self):
-        section_selected = ">"
-        section_non_selected = " "
-        selection_idx = 0
-        clear()
-        
-        while True:
-            selection_str_list = extract_item_names(self.player.object_data["skills"]) + ["Exit"]\
-                if len(self.player.object_data["skills"]) > 0 else ["Exit"] 
-            tmp = deepcopy(selection_str_list)
-            menu_length = len(tmp)
-            for i in range(menu_length):
-                if selection_idx  == i:
-                    tmp[i] = section_selected + tmp[i] 
-                else:
-                    tmp[i] = section_non_selected + tmp[i] 
 
-            print("="*30)
-            print("\n".join(tmp))
-            print("="*30)
-            print("Bonus point: {}".format(self.player.object_data["bonus_point"]))
-            
-            tmp = []
-            for i in non_selected_parameters[:3]:
-                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
-        
-            print(" ".join(tmp))
-            
-            tmp = []
-            for i in non_selected_parameters[3:]:
-                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
-                
-            print(" ".join(tmp))
-            ch = getch()
-
-            if ch == b'\r':
-                
-                if selection_idx < menu_length - 1:
-                    # The function that will use player's skills
-                    use_skill(self.player, self.player.object_data["skills"][selection_idx])
-
-                # Exit Item menu.
-                elif selection_idx == menu_length - 1:
-                    break
-            
-            elif ch == "UP_KEY":
-                if selection_idx > 0:
-                    selection_idx -= 1
-                
-            elif ch == "DOWN_KEY":
-                if selection_idx < menu_length - 1:
-                    selection_idx += 1
-
-            elif ch == b'\x1b':
-                break
-
-            clear()
-        clear()
-
-    # The item
-    # selected_item_type: item type to be equipped.
-    # equipped item 
     def _display_equitable_items_sub(self, selected_item_type, item_type_for_display):
         
         exit_and_unequip_to_player_menu = ["Unequip", "Exit"]
@@ -864,6 +881,73 @@ class MainGame(object):
         clear()
     
 
+    def _display_skills(self, is_in_fight = False):
+        section_selected = ">"
+        section_non_selected = " "
+        selection_idx = 0
+        clear()
+        
+        while True:
+            selection_str_list = extract_item_names(self.player.object_data["skills"]) + ["Exit"]\
+                if len(self.player.object_data["skills"]) > 0 else ["Exit"] 
+            tmp = deepcopy(selection_str_list)
+            menu_length = len(tmp)
+            for i in range(menu_length):
+                if selection_idx  == i:
+                    tmp[i] = section_selected + tmp[i] 
+                else:
+                    tmp[i] = section_non_selected + tmp[i] 
+
+            print("="*30)
+            print("\n".join(tmp))
+            print("="*30)
+            print("Bonus point: {}".format(self.player.object_data["bonus_point"]))
+            
+            tmp = []
+            for i in non_selected_parameters[:3]:
+                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
+        
+            print(" ".join(tmp))
+            
+            tmp = []
+            for i in non_selected_parameters[3:]:
+                tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
+                
+            print(" ".join(tmp))
+            ch = getch()
+
+            if ch == b'\r':
+                
+                if selection_idx < menu_length - 1:
+                    # The function that will use player's skills
+                    if is_in_fight:
+                        return self.player.object_data["skills"][selection_idx]
+                    else:
+                        use_skill(self.player, self.player.object_data["skills"][selection_idx])                
+                    break
+
+                # Exit Item menu.
+                elif selection_idx == menu_length - 1:
+                    break
+            
+            elif ch == "UP_KEY":
+                if selection_idx > 0:
+                    selection_idx -= 1
+                
+            elif ch == "DOWN_KEY":
+                if selection_idx < menu_length - 1:
+                    selection_idx += 1
+
+            elif ch == b'\x1b':
+                break
+
+            clear()
+        clear()
+
+    # The item
+    # selected_item_type: item type to be equipped.
+    # equipped item 
+    
     def _display_player_status(self):
 
         exit_to_player_menu = ["Exit"]

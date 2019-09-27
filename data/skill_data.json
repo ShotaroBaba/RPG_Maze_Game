@@ -33,7 +33,7 @@
     },
     "Fire": {
         "attribute": "fire",
-        "hp_change": 50,
+        "hp_change": -50,
         "mp_change": 0,
         "sp_change": 0,
         "ep_change": 0,
@@ -57,15 +57,15 @@
         "agility_multiplier": 0.0,
         "vitality_multiplier": 0.0,
         "dexterity_multiplier": 0.0,
-        "smartness_multiplier": 0.2,
-        "magic_power_multiplier": 0.4,
-        "mental_strength_multiplier": 0.1,
+        "smartness_multiplier": 0.02,
+        "magic_power_multiplier": 0.02,
+        "mental_strength_multiplier": 0.03,
         "luckiness_multiplier": 0.005,
         "is_in_fight": true
     },
     "Thunder": {
         "attribute": "thunder",
-        "hp_change": 50,
+        "hp_change": -50,
         "mp_change": 0,
         "sp_change": 0,
         "ep_change": 0,
@@ -97,7 +97,7 @@
     },
     "Water": {
         "attribute": "water",
-        "hp_change": 50,
+        "hp_change": -50,
         "mp_change": 0,
         "sp_change": 0,
         "ep_change": 0,
