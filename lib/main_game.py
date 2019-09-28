@@ -408,6 +408,7 @@ class MainGame(object):
 
             clear()
         clear()
+        
     # TODO: The encounter percentage must be changed
     # Take the luck of the player into account.
     def _enemy_encounter(self, player_luck_value):

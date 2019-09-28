@@ -38,7 +38,8 @@ class Application(object):
         ("is_ring","is_ring"),
         ("is_skill_book","is_skill_book")]
         
-        self.list_of_parameters_middle_2 = ["cure_poison","cure_paralyze","cure_curse","cure_all_status"]
+        # Item that cure negative status effects.
+        self.list_of_parameters_middle_2 = ["cure_poison","cure_paralyze","cure_curse","cure_seal","cure_all_status"]
         
         # TODO: Add the resitance to a attack adding status effects on player.
         # Only applied to the equipment for now.
@@ -71,7 +72,7 @@ class Application(object):
 
         self.main_group_right = tk.Frame(self.main_list_frame)
         self.main_group_right.grid(row = 0, column = 2, padx = 3, pady =3, sticky = tk.N)
-
+        
         # Listbox Frame
         self.main_group_list_box_frame = tk.Frame(self.main_list_frame)
         self.main_group_list_box_frame.grid(row = 0, column = 3, padx = 3, pady = 3, sticky = tk.NS)
@@ -97,6 +98,8 @@ class Application(object):
             self.radiobutton_middle_1 = tk.Radiobutton(self.main_group_radiobutton_1, text=text,
                             variable=self.middle_radio_button_value_1, value=mode)
             self.radiobutton_middle_1.pack(anchor=tk.W)
+
+
 
         for i,parameter_list in enumerate(self.list_of_parameters_left):
             exec("""self.{0}_adjust_label = tk.Label(self.main_group_right, text = "{0}: " )""". format(parameter_list))
@@ -148,6 +151,7 @@ class Application(object):
 
         for i in self.list_of_parameters_right[1:] + self.list_of_parameters_left:
             exec("tmp[i] = int(self.{0}_input_box.get())".format(i))
+        
         # Put & update the data of main creature data.
         main_item_data[main_item_name] = tmp
 

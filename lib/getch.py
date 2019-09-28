@@ -1,8 +1,7 @@
-# NOTE: Error message appears as one operating system is only compatible to one different package.
+
 
 class _Getch:
-    """Gets a single character from standard input. Does not echo to the
-screen."""
+
     def __init__(self):
         try:
             self.impl = _GetchWindows()
