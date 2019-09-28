@@ -58,13 +58,18 @@ def use_skill_book(skill_data, book_level = 1):
     filtered_skill_data = list(filter(lambda x: x[1]["level"] <= book_level, itemized_skill_data))
     return dict((choice(filtered_skill_data),))
 
-def filter_monster(monster_data, floor_level = 1):
+def filter_and_choose_monster_by_level(monster_data, floor_level = 1):
     filtered_monster_data = list(filter(lambda x: x[list(x.keys())[0]]["level"] <= floor_level, monster_data))
-    return dict(choice(filtered_monster_data))
+    return dict((choice(filtered_monster_data),))
 
-def filter_item_data(item_data, floor_level = 1):
+def filter_and_choose_item_data_by_level(item_data, floor_level = 1):
     filtered_item_data = list(filter(lambda x: x[1]["level"] <= floor_level, item_data.items()))
     return dict((choice(filtered_item_data),))
+
+# This function is mainly used for sorting purpose.
+def filter_item_data_by_type(item_data, item_type):
+    filtered_item_data = list(filter(lambda x: x[1][item_type], item_data.items()))
+    return filtered_item_data
 
 # Use item for player.
 def use_item(player,item_name,item_data):
