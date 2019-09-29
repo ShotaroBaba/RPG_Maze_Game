@@ -140,24 +140,20 @@ class Application(object):
         idx = int(w.curselection()[0])
         value = w.get(idx)
         
-        # Create creature skill data.
+        # If there is a skill already, then it will remove the file.
+        if value in self.main_group_list_box_creature_skill_data.get(0, tk.END):
+            return
+
         self.main_group_list_box_creature_skill_data.insert(tk.END, value)
         tmp = {}
         tmp[value] = self.raw_skill_data[value]
 
-        # Append creature skill data to creature skill list.
-        self.creature_skill_data.append(tmp)
 
     def _delete_creature_skill(self,evt):
-        
-        w = evt.widget
-        idx = int(w.curselection()[0])
 
         # Delete creature skill data.
         self.main_group_list_box_creature_skill_data.delete(tk.ANCHOR)
-        
-        # Delete the skill data from creature data.
-        del self.creature_skill_data[idx]
+
 
     def _save_creature_data(self):
         # 1. Check folder existence
@@ -190,7 +186,15 @@ class Application(object):
 
         exec("""tmp["{0}"] = self.{0}_input_box.get()""".format("drop_item"))
         exec("""tmp["{0}"] = int(self.{0}_input_box.get())""".format("exp"))
+        
+        # Initialise skills
+        tmp["skills"] = []
 
+        for i in self.main_group_list_box_creature_skill_data.get(0, tk.END):
+            tmp_skill = {}
+            tmp_skill[i] = self.raw_skill_data[i]
+            tmp["skills"].append(tmp_skill)
+     
         # Put & update the data of main creature data.
         main_creature_data[main_creature_name] = tmp
 
@@ -237,11 +241,10 @@ class Application(object):
         
         
         try:
-            for i in self.monster_list[value]["skill_data"]:
+            for i in self.monster_list[value]["skills"]:
                 self.main_group_list_box_creature_skill_data.insert(tk.END, list(i.keys())[0])
         except:
             self.main_group_list_box_creature_skill_data.delete(0,tk.END)
-            self.creature_skill_data = []
 
         
 
