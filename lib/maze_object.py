@@ -187,8 +187,6 @@ class MazeObject(object):
         self.object_data["drop_item"]  = json_data["drop_item"]\
             if json_data != {} and "drop_item" in json_data.keys() else {}
 
-        self.object_data["skills"] = json_data["skills"]\
-            if json_data != {} and "skills" in json_data.keys() else []
 
     # Apply skills to a certain person, enemy or items
     # NOTE: Skills will be a set of json data.
@@ -306,7 +304,7 @@ class MazeObject(object):
             print("Player reached to level {}".format(self.object_data["level"]))
             
             # Randomly allocate the values once the level is up
-            for _ in range(3 + (self.object_data["level"] // 10)):
+            for _ in range(5 + (self.object_data["level"] // 10)):
                 tmp_choice = choice(numerical_player_strengh + non_numerical_player_strength)
                 
                 if tmp_choice in numerical_player_strengh:

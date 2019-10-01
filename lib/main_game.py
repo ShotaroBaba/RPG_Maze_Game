@@ -17,6 +17,9 @@ from maze_object import MazeObject
 from default_values import *
 from sub_func import *
 
+# Possibility of using the skill: 20%
+enemy_use_skill_possibility = 0.2
+
 # The value which determine the difficulty of level increase.
 constant_next_level_exp = 1.4
 default_amount_to_reveal = 3
@@ -190,7 +193,7 @@ class MainGame(object):
     # TODO: Create class for fight screen.
     # It will become too long and complicated if it hasn't done.
     # enemy_fight will handle the map object..
-    def _enemy_fight(self):
+    def _fight_with_enemy(self):
         
         # Create selection screen
         selection_list = ["Fight", "Skills", "Item","Status", "Escape"]
@@ -265,26 +268,38 @@ class MainGame(object):
                 getch()
                 return False
         
-        # NOTE: Enemy use the skill randomly.
+        # NOTE: Enemy use the skill randomly (20% of chance).
         # TODO: Both enemy and player can use the same function.
-        def _player_turn_use_skill(skill_data, user, opponents, is_enemy = False, message = "player"):
+        def _turn_use_skill(skill_data, skill_user, opponent, is_enemy = False, message = "player"):
             
-            hp_change, mp_change, sp_change, ep_change, is_player = use_skill(user,skill_data, opponents, False)
+            if is_enemy and skill_data == None:
+            # If there is no skills, then it will conduct an normal attack
+                _enemy_turn_normal_attack()
+                return
+
+            hp_change, mp_change, sp_change, ep_change, is_player = use_skill(skill_user,skill_data, opponent, is_enemy)
             
-            print("Player use skill")
-            if not is_enemy and enemy.object_data["current_hp"]  < 1:
+            print("{} use skill".format(message))
+            if is_enemy and opponent.object_data["current_hp"] < 1:
+                print("You are defeated...")
+                print("Game Over...")
+                getch()
+                clear()
+                return True
+
+            elif not is_enemy and opponent.object_data["current_hp"]  < 1:
                 print("You defeated the creature!")
-                print("Player acquire {} exp".format(enemy.object_data["exp"]))
+                print("Player acquire {} exp".format(opponent.object_data["exp"]))
                 print("Press any key to return to map...")
-                user._get_experience(enemy.object_data["exp"])
+                skill_user._get_experience(opponent.object_data["exp"])
                 
                 # If it is bigger, then the enemy will drop an item.
-                if uniform(0,1.0) > 0.8 - (0.8 / (100 / (user.object_data["current_luckiness"] ** 0.70))):
+                if uniform(0,1.0) > 0.8 - (0.8 / (100 / (skill_user.object_data["current_luckiness"] ** 0.70))):
                     print("Enemy dropped item!")
-                    print("The content of the item is {}".format(enemy.object_data["drop_item"]))
+                    print("The content of the item is {}".format(opponent.object_data["drop_item"]))
                     tmp = {}
-                    tmp[enemy.object_data["drop_item"]] = item_json[enemy.object_data["drop_item"]]
-                    user.object_data["items"].append(tmp)
+                    tmp[opponent.object_data["drop_item"]] = item_json[opponent.object_data["drop_item"]]
+                    skill_user.object_data["items"].append(tmp)
                 
                 getch()
                 clear()
@@ -346,14 +361,31 @@ class MainGame(object):
 
                     # Turn based fight. The player can firstly fight for the enemy this value is higher.
                     if uniform(0.8, 1.0)*self.player.object_data["agility"] > uniform(0.8,1.0)* enemy.object_data["agility"]:
+                        
+                        # Player turn.
                         if _player_turn_normal_attack():
                             break
-                        if _enemy_turn_normal_attack():
-                            return True
+                        
+                        # Enemy turn
+                        if uniform (0, 1.0) < enemy_use_skill_possibility:
+                            if _enemy_turn_normal_attack():
+                                return True
+                            else:
+                                if _turn_use_skill(choice(enemy.object_data["skills"]) if enemy.object_data["skills"] != [] else None
+                                ,enemy,self.player, True, "Enemy"):
+                                    return True
 
                     else:
-                        if _enemy_turn_normal_attack():
-                            return True
+                        # Enemy turn
+                        if uniform (0, 1.0) < enemy_use_skill_possibility:
+                            if _enemy_turn_normal_attack():
+                                return True
+                            else:
+                                if _turn_use_skill(choice(enemy.object_data["skills"]) if enemy.object_data["skills"] != [] else None
+                                ,enemy,self.player, True, "Enemy"):
+                                    return True
+
+                        # Player turn.
                         if _player_turn_normal_attack():
                             break
                     
@@ -362,17 +394,37 @@ class MainGame(object):
                 elif cursor_selection == 1:
                     skill_data = self._display_skills(True)
                     if skill_data != None: 
-
+                         
                         # Turn based fight. The player can firstly fight for the enemy this value is higher.
                         if uniform(0.8, 1.0)*self.player.object_data["agility"] > uniform(0.8,1.0)* enemy.object_data["agility"]:
-                            if _player_turn_use_skill(skill_data,self.player, enemy):
+                            
+                            # Player turn
+                            if _turn_use_skill(skill_data,self.player, enemy):
                                 break
-                            if _enemy_turn_normal_attack():
-                                return True
+                            
+                            # Enemy turn
+                            if uniform (0, 1.0) < enemy_use_skill_possibility:
+                                if _enemy_turn_normal_attack():
+                                    return True
+                            else:
+                                if _turn_use_skill(choice(enemy.object_data["skills"]) if enemy.object_data["skills"] != [] else None
+                                ,enemy,self.player, True, "Enemy"):
+                                    return True
                         else:
-                            if _enemy_turn_normal_attack():
-                                return True
-                            if _player_turn_use_skill(skill_data,self.player, enemy):
+                            # Enemy turn
+                            if uniform (0, 1.0) < enemy_use_skill_possibility:
+                                if _enemy_turn_normal_attack():
+                                    return True
+                                else:
+                                    if _turn_use_skill(choice(enemy.object_data["skills"]) if enemy.object_data["skills"] != [] else None
+                                    ,enemy,self.player, True, "Enemy"):
+                                        return True
+                            else:
+                                if _turn_use_skill(enemy.object_data["skills"],enemy,self.player, True, "Enemy"):
+                                    return True
+                            
+                            # Player Turn
+                            if _turn_use_skill(skill_data,self.player, enemy):
                                 break
                         getch()
 
@@ -419,7 +471,7 @@ class MainGame(object):
 
         # Create the object instead of calling function...
         if 0 < k and k < tmp:
-            return self._enemy_fight()
+            return self._fight_with_enemy()
 
     def _initialize_map(self):
         self.map_grid = generate_maze_grid(make_maze_grid(self.width,self.height))

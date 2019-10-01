@@ -99,7 +99,7 @@ def use_item(player,item_name,item_data):
 
     return hp_changed or mp_changed or sp_changed or ep_changed
 
-def use_skill(player, skill_data, target_object = None, is_in_menu = True):
+def use_skill(skill_user, skill_data, target_object = None, is_in_menu = True):
     
     # TODO: Do not use item when a current value is the same as a maximum value
     skill_name = list(skill_data.keys())[0]
@@ -112,44 +112,44 @@ def use_skill(player, skill_data, target_object = None, is_in_menu = True):
     # TODO: Add the status effects on the player.
     # Heal or alter player's status.
     elif not skill_data[skill_name]["is_in_fight"]:
-        if (player.object_data["current_hp"] - skill_data[skill_name]["hp_spent"] >= 0 
+        if (skill_user.object_data["current_hp"] - skill_data[skill_name]["hp_spent"] >= 0 
         or skill_data[skill_name]["hp_spent"] == 0)\
-        and (player.object_data["current_mp"] - skill_data[skill_name]["mp_spent"] >= 0 
+        and (skill_user.object_data["current_mp"] - skill_data[skill_name]["mp_spent"] >= 0 
         or skill_data[skill_name]["mp_spent"] == 0)\
-        and (player.object_data["current_sp"] - skill_data[skill_name]["sp_spent"] >= 0 
+        and (skill_user.object_data["current_sp"] - skill_data[skill_name]["sp_spent"] >= 0 
         or skill_data[skill_name]["sp_spent"] == 0)\
-        and (player.object_data["current_ep"] - skill_data[skill_name]["ep_spent"] >= 0 
+        and (skill_user.object_data["current_ep"] - skill_data[skill_name]["ep_spent"] >= 0 
         or skill_data[skill_name]["ep_spent"] == 0):
         
-            if (player.object_data["current_hp"] != player.object_data["current_max_hp"] 
+            if (skill_user.object_data["current_hp"] != skill_user.object_data["current_max_hp"] 
             and skill_data[skill_name]["hp_change"] != 0)\
-            or (player.object_data["current_mp"] != player.object_data["current_max_mp"] 
+            or (skill_user.object_data["current_mp"] != skill_user.object_data["current_max_mp"] 
             and skill_data[skill_name]["mp_change"] != 0)\
-            or (player.object_data["current_sp"] != player.object_data["current_max_sp"] 
+            or (skill_user.object_data["current_sp"] != skill_user.object_data["current_max_sp"] 
             and skill_data[skill_name]["sp_change"] != 0)\
-            or (player.object_data["current_ep"] != player.object_data["current_max_ep"] 
+            or (skill_user.object_data["current_ep"] != skill_user.object_data["current_max_ep"] 
             and skill_data[skill_name]["ep_change"] != 0):
 
 
-                hp_change = use_skill_sub(player, skill_data, skill_data[skill_name]["hp_change"])
-                player.object_data["current_hp"] = min(player.object_data["current_hp"] + 
+                hp_change = use_skill_sub(skill_user, skill_data, skill_data[skill_name]["hp_change"])
+                skill_user.object_data["current_hp"] = min(skill_user.object_data["current_hp"] + 
                 hp_change,
-                player.object_data["current_max_hp"])
+                skill_user.object_data["current_max_hp"])
 
-                mp_change = use_skill_sub(player, skill_data, skill_data[skill_name]["mp_change"])
-                player.object_data["current_mp"] = min(player.object_data["current_mp"] + 
+                mp_change = use_skill_sub(skill_user, skill_data, skill_data[skill_name]["mp_change"])
+                skill_user.object_data["current_mp"] = min(skill_user.object_data["current_mp"] + 
                 mp_change,
-                player.object_data["current_max_mp"])
+                skill_user.object_data["current_max_mp"])
                 
-                sp_change = use_skill_sub(player, skill_data, skill_data[skill_name]["sp_change"])
-                player.object_data["current_sp"] = min(player.object_data["current_sp"] + 
+                sp_change = use_skill_sub(skill_user, skill_data, skill_data[skill_name]["sp_change"])
+                skill_user.object_data["current_sp"] = min(skill_user.object_data["current_sp"] + 
                 sp_change,
-                player.object_data["current_max_sp"])
+                skill_user.object_data["current_max_sp"])
 
-                ep_change = use_skill_sub(player, skill_data, skill_data[skill_name]["ep_change"])
-                player.object_data["current_ep"] = min(player.object_data["current_ep"] + 
+                ep_change = use_skill_sub(skill_user, skill_data, skill_data[skill_name]["ep_change"])
+                skill_user.object_data["current_ep"] = min(skill_user.object_data["current_ep"] + 
                 ep_change,
-                player.object_data["current_max_ep"])
+                skill_user.object_data["current_max_ep"])
 
             
                 return hp_change, mp_change, sp_change, ep_change, True
@@ -158,39 +158,39 @@ def use_skill(player, skill_data, target_object = None, is_in_menu = True):
     # TODO: Add the status effects on the enemy.
     # If player is in fight, then it will perform the attack against enemy.
     elif skill_data[skill_name]["is_in_fight"] and target_object != None:
-        if (player.object_data["current_hp"] - skill_data[skill_name]["hp_spent"] >= 0 
+        if (skill_user.object_data["current_hp"] - skill_data[skill_name]["hp_spent"] >= 0 
         or skill_data[skill_name]["hp_spent"] == 0)\
-        and (player.object_data["current_mp"] - skill_data[skill_name]["mp_spent"] >= 0 
+        and (skill_user.object_data["current_mp"] - skill_data[skill_name]["mp_spent"] >= 0 
         or skill_data[skill_name]["mp_spent"] == 0)\
-        and (player.object_data["current_sp"] - skill_data[skill_name]["sp_spent"] >= 0 
+        and (skill_user.object_data["current_sp"] - skill_data[skill_name]["sp_spent"] >= 0 
         or skill_data[skill_name]["sp_spent"] == 0)\
-        and (player.object_data["current_ep"] - skill_data[skill_name]["ep_spent"] >= 0 
+        and (skill_user.object_data["current_ep"] - skill_data[skill_name]["ep_spent"] >= 0 
         or skill_data[skill_name]["ep_spent"] == 0):
             
-            hp_change = use_skill_sub(player, skill_data, skill_data[skill_name]["hp_change"])
+            hp_change = use_skill_sub(skill_user, skill_data, skill_data[skill_name]["hp_change"])
             target_object.object_data["current_hp"] = min(target_object.object_data["current_hp"] + 
             hp_change,
             target_object.object_data["current_max_hp"])
 
-            mp_change = use_skill_sub(player, skill_data, skill_data[skill_name]["mp_change"])
+            mp_change = use_skill_sub(skill_user, skill_data, skill_data[skill_name]["mp_change"])
             target_object.object_data["current_mp"] = min(target_object.object_data["current_mp"] + 
             mp_change,
             target_object.object_data["current_max_mp"])
             
-            sp_change = use_skill_sub(player, skill_data, skill_data[skill_name]["sp_change"])
+            sp_change = use_skill_sub(skill_user, skill_data, skill_data[skill_name]["sp_change"])
             target_object.object_data["current_sp"] = min(target_object.object_data["current_sp"] + 
             sp_change,
             target_object.object_data["current_max_sp"])
 
-            ep_change = use_skill_sub(player, skill_data, skill_data[skill_name]["ep_change"])
+            ep_change = use_skill_sub(skill_user, skill_data, skill_data[skill_name]["ep_change"])
             target_object.object_data["current_ep"] = min(target_object.object_data["current_ep"] + 
             ep_change,
             target_object.object_data["current_max_ep"])
             
-            player.object_data["current_hp"]  -= skill_data[skill_name]["hp_spent"]
-            player.object_data["current_mp"]  -= skill_data[skill_name]["mp_spent"]
-            player.object_data["current_sp"]  -= skill_data[skill_name]["sp_spent"]
-            player.object_data["current_ep"]  -= skill_data[skill_name]["ep_spent"] 
+            skill_user.object_data["current_hp"]  -= skill_data[skill_name]["hp_spent"]
+            skill_user.object_data["current_mp"]  -= skill_data[skill_name]["mp_spent"]
+            skill_user.object_data["current_sp"]  -= skill_data[skill_name]["sp_spent"]
+            skill_user.object_data["current_ep"]  -= skill_data[skill_name]["ep_spent"] 
                 
             return hp_change, mp_change, sp_change, ep_change, False
 
