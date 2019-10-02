@@ -241,6 +241,8 @@ class Application(object):
         
         
         try:
+            # Delete & load creature data
+            self.main_group_list_box_creature_skill_data.delete(0, tk.END)
             for i in self.monster_list[value]["skills"]:
                 self.main_group_list_box_creature_skill_data.insert(tk.END, list(i.keys())[0])
         except:

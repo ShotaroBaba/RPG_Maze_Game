@@ -111,8 +111,9 @@ def use_skill(skill_user, skill_data, target_object = None, is_in_menu = True):
     
     # TODO: Add the status effects on the player.
     # Heal or alter player's status.
+    # When enemy us`ing the skill, whether skill is used in main menu must be considered
     elif not skill_data[skill_name]["is_in_fight"]:
-        if (skill_user.object_data["current_hp"] - skill_data[skill_name]["hp_spent"] >= 0 
+        if not is_in_menu or (skill_user.object_data["current_hp"] - skill_data[skill_name]["hp_spent"] >= 0 
         or skill_data[skill_name]["hp_spent"] == 0)\
         and (skill_user.object_data["current_mp"] - skill_data[skill_name]["mp_spent"] >= 0 
         or skill_data[skill_name]["mp_spent"] == 0)\
@@ -121,7 +122,7 @@ def use_skill(skill_user, skill_data, target_object = None, is_in_menu = True):
         and (skill_user.object_data["current_ep"] - skill_data[skill_name]["ep_spent"] >= 0 
         or skill_data[skill_name]["ep_spent"] == 0):
         
-            if (skill_user.object_data["current_hp"] != skill_user.object_data["current_max_hp"] 
+            if not is_in_menu or (skill_user.object_data["current_hp"] != skill_user.object_data["current_max_hp"] 
             and skill_data[skill_name]["hp_change"] != 0)\
             or (skill_user.object_data["current_mp"] != skill_user.object_data["current_max_mp"] 
             and skill_data[skill_name]["mp_change"] != 0)\
@@ -158,7 +159,7 @@ def use_skill(skill_user, skill_data, target_object = None, is_in_menu = True):
     # TODO: Add the status effects on the enemy.
     # If player is in fight, then it will perform the attack against enemy.
     elif skill_data[skill_name]["is_in_fight"] and target_object != None:
-        if (skill_user.object_data["current_hp"] - skill_data[skill_name]["hp_spent"] >= 0 
+        if not is_in_menu or (skill_user.object_data["current_hp"] - skill_data[skill_name]["hp_spent"] >= 0 
         or skill_data[skill_name]["hp_spent"] == 0)\
         and (skill_user.object_data["current_mp"] - skill_data[skill_name]["mp_spent"] >= 0 
         or skill_data[skill_name]["mp_spent"] == 0)\

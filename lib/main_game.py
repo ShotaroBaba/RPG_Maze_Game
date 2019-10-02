@@ -18,7 +18,8 @@ from default_values import *
 from sub_func import *
 
 # Possibility of using the skill: 20%
-enemy_use_skill_possibility = 0.2
+# To test the skills using enemy: Set this to 100% (1.0)
+enemy_use_skill_possibility = 0.0
 
 # The value which determine the difficulty of level increase.
 constant_next_level_exp = 1.4
@@ -277,7 +278,8 @@ class MainGame(object):
                 _enemy_turn_normal_attack()
                 return
 
-            hp_change, mp_change, sp_change, ep_change, is_player = use_skill(skill_user,skill_data, opponent, is_enemy)
+            hp_change, mp_change, sp_change, ep_change, is_against_player =\
+                use_skill(skill_user,skill_data, opponent, False)
             
             print("{} use skill".format(message))
             if is_enemy and opponent.object_data["current_hp"] < 1:
@@ -306,9 +308,9 @@ class MainGame(object):
                 return True
             
             else:
-                if is_player:
+                if is_against_player:
                     if hp_change > 0:
-                        print("{} gained {} point(s)".format(message,hp_change))
+                        print("{} gained {} hp point(s)".format(message,hp_change))
                     if mp_change > 0:
                         print("{} gained {} mp point(s)".format(message,mp_change))
                     if sp_change > 0:
@@ -320,13 +322,13 @@ class MainGame(object):
                 # TODO: Remove abs.
                 else:
                     if hp_change > 0:
-                        print("{} delivers {} damage".format(message, hp_change))
+                        print("{} delivered {} damage".format(message, hp_change))
                     if mp_change > 0:
-                        print("{} delivers {} mp damage".format(message, mp_change))
+                        print("{} delivered {} mp damage".format(message, mp_change))
                     if sp_change > 0:
-                        print("{} delivers {} sp damage".format(message, sp_change))
+                        print("{} delivered {} sp damage".format(message, sp_change))
                     if ep_change > 0:
-                        print("{} delivers {} ep damage".format(message, ep_change))
+                        print("{} delivered {} ep damage".format(message, ep_change))
                     getch()
                 
                 return False
@@ -344,18 +346,19 @@ class MainGame(object):
             self._display_status()
             print("\n".join(tmp_cursor))
             tmp_cursor = deepcopy(selection_list)
-            tmp = getch()
+            tmp_key = getch()
 
-            if tmp == "UP_KEY":
+            if tmp_key == "UP_KEY":
                 if cursor_selection > 0:
                         cursor_selection -= 1
                 
-            elif tmp == "DOWN_KEY":
+            elif tmp_key == "DOWN_KEY":
                 if cursor_selection < len(tmp_cursor) - 1:
                         cursor_selection += 1
 
-            elif tmp == b"\r":
-
+            elif tmp_key == b"\r":
+                
+                # TODO: Enable player to act simultaneously.
                 # Normally attack the enemy.
                 if cursor_selection == 0:
 
@@ -370,20 +373,20 @@ class MainGame(object):
                         if uniform (0, 1.0) < enemy_use_skill_possibility:
                             if _enemy_turn_normal_attack():
                                 return True
-                            else:
-                                if _turn_use_skill(choice(enemy.object_data["skills"]) if enemy.object_data["skills"] != [] else None
-                                ,enemy,self.player, True, "Enemy"):
-                                    return True
+                        else:
+                            if _turn_use_skill(choice(enemy.object_data["skills"]) if enemy.object_data["skills"] != [] else None
+                            ,enemy,self.player, True, "Enemy"):
+                                return True
 
                     else:
                         # Enemy turn
                         if uniform (0, 1.0) < enemy_use_skill_possibility:
                             if _enemy_turn_normal_attack():
                                 return True
-                            else:
-                                if _turn_use_skill(choice(enemy.object_data["skills"]) if enemy.object_data["skills"] != [] else None
-                                ,enemy,self.player, True, "Enemy"):
-                                    return True
+                        else:
+                            if _turn_use_skill(choice(enemy.object_data["skills"]) if enemy.object_data["skills"] != [] else None
+                            ,enemy,self.player, True, "Enemy"):
+                                return True
 
                         # Player turn.
                         if _player_turn_normal_attack():
@@ -411,16 +414,14 @@ class MainGame(object):
                                 ,enemy,self.player, True, "Enemy"):
                                     return True
                         else:
+
                             # Enemy turn
                             if uniform (0, 1.0) < enemy_use_skill_possibility:
                                 if _enemy_turn_normal_attack():
                                     return True
-                                else:
-                                    if _turn_use_skill(choice(enemy.object_data["skills"]) if enemy.object_data["skills"] != [] else None
-                                    ,enemy,self.player, True, "Enemy"):
-                                        return True
                             else:
-                                if _turn_use_skill(enemy.object_data["skills"],enemy,self.player, True, "Enemy"):
+                                if _turn_use_skill(choice(enemy.object_data["skills"]) if enemy.object_data["skills"] != [] else None
+                                ,enemy,self.player, True, "Enemy"):
                                     return True
                             
                             # Player Turn
@@ -549,16 +550,16 @@ class MainGame(object):
             print("".join(tmp_cursor))
 
             tmp_cursor = deepcopy(selection_list)
-            tmp = getch()
-            if tmp == "LEFT_KEY":
+            tmp_key = getch()
+            if tmp_key == "LEFT_KEY":
                 if cursor_selection > 0:
                         cursor_selection -= 1
                 
-            elif tmp == "RIGHT_KEY":
+            elif tmp_key == "RIGHT_KEY":
                 if cursor_selection < len(tmp_cursor) - 1:
                         cursor_selection += 1
 
-            elif tmp == b"\r":
+            elif tmp_key == b"\r":
                 # Yes case --> Initialise map.
                 if cursor_selection == 0:
                     
@@ -599,17 +600,17 @@ class MainGame(object):
             print("\n".join(tmp_cursor))
 
             tmp_cursor = deepcopy(selection_list)
-            tmp = getch()
+            tmp_key = getch()
             
-            if tmp == "UP_KEY":
+            if tmp_key == "UP_KEY":
                 if cursor_selection > 0:
                     cursor_selection -= 1
                 
-            elif tmp == "DOWN_KEY":
+            elif tmp_key == "DOWN_KEY":
                 if cursor_selection < len(tmp_cursor) - 1:
                     cursor_selection += 1
 
-            elif tmp == b"\r":
+            elif tmp_key == b"\r":
 
                 # Display items player has got.
                 if cursor_selection == 0:
@@ -637,7 +638,7 @@ class MainGame(object):
 
                 clear()
 
-            elif tmp == b"\x1b":
+            elif tmp_key == b"\x1b":
                 break
 
             clear()
@@ -665,16 +666,16 @@ class MainGame(object):
             print("Will you dispose the selected item?")
             print("".join(tmp_cursor))
             tmp_cursor = deepcopy(selection_list)
-            tmp = getch()
-            if tmp == "LEFT_KEY":
+            tmp_key = getch()
+            if tmp_key == "LEFT_KEY":
                 if cursor_selection > 0:
                         cursor_selection -= 1
                 
-            elif tmp == "RIGHT_KEY":
+            elif tmp_key == "RIGHT_KEY":
                 if cursor_selection < len(tmp_cursor) - 1:
                         cursor_selection += 1
 
-            elif tmp == b"\r":
+            elif tmp_key == b"\r":
                 # Yes case --> Initialise map.
                 if cursor_selection == 0:
                     return True
@@ -721,9 +722,9 @@ class MainGame(object):
                 tmp.append("{0}: {1}".format(i, self.player.object_data[i]))    
             displayed_str +=  " ".join(tmp) + "\n"
             print(displayed_str)
-            ch = getch()
+            tmp_key = getch()
 
-            if ch == b'\r':
+            if tmp_key == b'\r':
 
                 if selection_idx < menu_length - 1:
                     # TODO: The temporary effect needs to be considered.
@@ -734,7 +735,7 @@ class MainGame(object):
                         if use_item(self.player, item_name, item):
                             del item_list[selection_idx]
                     elif item[item_name]["is_skill_book"]:
-                        # Put the skills on the player if the skill slot is not beyond the skills.
+                        # Put the skills on the player if the skill slot is not beyond the skils.
                         self.player.object_data["skills"].append(use_skill_book(skill_json, item[item_name]["level"]))
                         del item_list[selection_idx]
 
@@ -742,19 +743,19 @@ class MainGame(object):
                 elif selection_idx == menu_length - 1:
                     break
             
-            elif ch == "UP_KEY":
+            elif tmp_key == "UP_KEY":
                 if selection_idx > 0:
                     selection_idx -= 1
                 
-            elif ch == "DOWN_KEY":
+            elif tmp_key == "DOWN_KEY":
                 if selection_idx < menu_length - 1:
                     selection_idx += 1
             
-            elif ch == b"d" or ch == b"D":
+            elif tmp_key == b"d" or tmp_key == b"D":
                 if self._dispose_item(displayed_str):
                     del item_list[selection_idx]
 
-            elif ch == b'\x1b':
+            elif tmp_key == b'\x1b':
                 break
 
             clear()
@@ -809,11 +810,11 @@ class MainGame(object):
             for i in non_selected_parameters[3:]:
                 tmp.append("{0}: {1}".format(i, self.player.object_data[i]))    
             print(displayed_str)
-            ch = getch()
+            tmp_key = getch()
             displayed_str +=  " ".join(tmp) + "\n"
 
             
-            if ch == b'\r':
+            if tmp_key == b'\r':
                 # TODO: Select only the items labelled as one of body parts.
                 if selection_idx < menu_length - 1:
                     if "hand" in body_parts_list[selection_idx]:
@@ -828,15 +829,15 @@ class MainGame(object):
                 elif selection_idx == menu_length - 1:
                     break
             
-            elif ch == "UP_KEY":
+            elif tmp_key == "UP_KEY":
                 if selection_idx > 0:
                     selection_idx -= 1
                 
-            elif ch == "DOWN_KEY":
+            elif tmp_key == "DOWN_KEY":
                 if selection_idx < menu_length - 1:
                     selection_idx += 1
 
-            elif ch == b'\x1b':
+            elif tmp_key == b'\x1b':
                 break
 
             clear()
@@ -886,9 +887,9 @@ class MainGame(object):
                 tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
                 
             print(" ".join(tmp))
-            ch = getch()            
+            tmp_key = getch()            
 
-            if ch == b'\r':
+            if tmp_key == b'\r':
                 # Equip the item by inserting the data to the corresponding part of dictionary.
                 # TODO: Select only the items labelled as one of body parts.
                 # Equip the item for player.
@@ -914,19 +915,19 @@ class MainGame(object):
                 elif selection_idx == menu_length - 1:
                     break
             
-            elif ch == "UP_KEY":
+            elif tmp_key == "UP_KEY":
                 if selection_idx > 0:
                     selection_idx -= 1
                 
-            elif ch == "DOWN_KEY":
+            elif tmp_key == "DOWN_KEY":
                 if selection_idx < menu_length - 1:
                     selection_idx += 1
             
-            elif ch == b"d" or ch == b"D":
+            elif tmp_key == b"d" or tmp_key == b"D":
                 if self._dispose_item(""):
                     del item_list[selection_idx]
 
-            elif ch == b'\x1b':
+            elif tmp_key == b'\x1b':
                 break
 
             clear()
@@ -967,9 +968,9 @@ class MainGame(object):
                 tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
                 
             print(" ".join(tmp))
-            ch = getch()
+            tmp_key = getch()
 
-            if ch == b'\r':
+            if tmp_key == b'\r':
                 
                 if selection_idx < menu_length - 1:
                     # The function that will use player's skills
@@ -983,15 +984,15 @@ class MainGame(object):
                 elif selection_idx == menu_length - 1:
                     break
             
-            elif ch == "UP_KEY":
+            elif tmp_key == "UP_KEY":
                 if selection_idx > 0:
                     selection_idx -= 1
                 
-            elif ch == "DOWN_KEY":
+            elif tmp_key == "DOWN_KEY":
                 if selection_idx < menu_length - 1:
                     selection_idx += 1
 
-            elif ch == b'\x1b':
+            elif tmp_key == b'\x1b':
                 break
 
             clear()
@@ -1048,9 +1049,9 @@ class MainGame(object):
                 tmp.append("{0}: {1}".format(i, self.player.object_data[i]))
                 
             print(" ".join(tmp))
-            ch = getch()
+            tmp_key = getch()
 
-            if ch == b'\r':
+            if tmp_key == b'\r':
                 
                 if selection_idx < 3 and self.player.object_data["bonus_point"] > 0:
                     self.player.object_data[selection_str_list[selection_idx]] += 5
@@ -1063,15 +1064,15 @@ class MainGame(object):
                 elif selection_idx == menu_length - 1:
                     break
             
-            elif ch == "UP_KEY":
+            elif tmp_key == "UP_KEY":
                 if selection_idx > 0:
                     selection_idx -= 1
                 
-            elif ch == "DOWN_KEY":
+            elif tmp_key == "DOWN_KEY":
                 if selection_idx < menu_length - 1:
                     selection_idx += 1
             
-            elif ch == b'\x1b':
+            elif tmp_key == b'\x1b':
                 break
 
             self.player.update_object()
@@ -1203,23 +1204,23 @@ class MainGame(object):
             print("".join(tmp_cursor))
 
             tmp_cursor = deepcopy(selection_list)
-            tmp = getch()
-            if tmp == "LEFT_KEY":
+            tmp_key = getch()
+            if tmp_key == "LEFT_KEY":
                 if cursor_selection > 0:
                         cursor_selection -= 1
                 
-            elif tmp == "RIGHT_KEY":
+            elif tmp_key == "RIGHT_KEY":
                 if cursor_selection < len(tmp_cursor) - 1:
                         cursor_selection += 1
 
-            elif tmp == b"\r":
+            elif tmp_key == b"\r":
 
                 # Yes case --> Initialise map.
                 if cursor_selection == 0:
                     obtained_item = random_item_selection()
-                    tmp = {}
-                    tmp[obtained_item] = item_json[obtained_item]
-                    self.player.object_data["items"].append(tmp)
+                    tmp_key = {}
+                    tmp_key[obtained_item] = item_json[obtained_item]
+                    self.player.object_data["items"].append(tmp_key)
 
                     # Remove the treasure from original map.
                     self.original_map_grid[next_player_pos[0]][next_player_pos[1]] = " "

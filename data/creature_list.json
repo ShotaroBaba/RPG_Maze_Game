@@ -1,6 +1,6 @@
 {
     "Goblin": {
-        "hp": 10,
+        "hp": 40,
         "mp": 10,
         "sp": 10,
         "ep": 10,
@@ -17,7 +17,7 @@
         "exp": 10,
         "skills": [
             {
-                "Dummy_2": {
+                "Dummy_1": {
                     "attribute": "water",
                     "hp_change": 1,
                     "mp_change": 0,
@@ -51,7 +51,7 @@
                 }
             },
             {
-                "Dummy_1": {
+                "Dummy_2": {
                     "attribute": "water",
                     "hp_change": 1,
                     "mp_change": 0,
@@ -87,7 +87,7 @@
         ]
     },
     "Bat": {
-        "hp": 15,
+        "hp": 40,
         "mp": 10,
         "sp": 10,
         "ep": 10,
@@ -99,9 +99,79 @@
         "magic_power": 1,
         "mental_strength": 2,
         "luckiness": 3,
-        "drop_item": "Potion",
         "level": 1,
-        "exp": 15
+        "drop_item": "Potion",
+        "exp": 15,
+        "skills": [
+            {
+                "Dummy_1": {
+                    "attribute": "water",
+                    "hp_change": 1,
+                    "mp_change": 0,
+                    "sp_change": 0,
+                    "ep_change": 0,
+                    "strength_change": 0,
+                    "agility_change": 0,
+                    "vitality_change": 0,
+                    "dexterity_change": 0,
+                    "smartness_change": 0,
+                    "magic_power_change": 0,
+                    "mental_strength_change": 0,
+                    "luckiness_change": 0,
+                    "effective_time": 0,
+                    "durablity_change": 0,
+                    "weight": 0,
+                    "level": 1,
+                    "hp_spent": 0,
+                    "mp_spent": 0,
+                    "sp_spent": 0,
+                    "ep_spent": 0,
+                    "strength_multiplier": 0.0,
+                    "agility_multiplier": 0.0,
+                    "vitality_multiplier": 0.0,
+                    "dexterity_multiplier": 0.0,
+                    "smartness_multiplier": 0.0,
+                    "magic_power_multiplier": 0.0,
+                    "mental_strength_multiplier": 0.0,
+                    "luckiness_multiplier": 0.0001,
+                    "is_in_fight": true
+                }
+            },
+            {
+                "Dummy_2": {
+                    "attribute": "water",
+                    "hp_change": 1,
+                    "mp_change": 0,
+                    "sp_change": 0,
+                    "ep_change": 0,
+                    "strength_change": 0,
+                    "agility_change": 0,
+                    "vitality_change": 0,
+                    "dexterity_change": 0,
+                    "smartness_change": 0,
+                    "magic_power_change": 0,
+                    "mental_strength_change": 0,
+                    "luckiness_change": 0,
+                    "effective_time": 0,
+                    "durablity_change": 0,
+                    "weight": 0,
+                    "level": 1,
+                    "hp_spent": 0,
+                    "mp_spent": 0,
+                    "sp_spent": 0,
+                    "ep_spent": 0,
+                    "strength_multiplier": 0.0,
+                    "agility_multiplier": 0.0,
+                    "vitality_multiplier": 0.0,
+                    "dexterity_multiplier": 0.0,
+                    "smartness_multiplier": 0.0,
+                    "magic_power_multiplier": 0.0,
+                    "mental_strength_multiplier": 0.0,
+                    "luckiness_multiplier": 0.0001,
+                    "is_in_fight": true
+                }
+            }
+        ]
     },
     "Small dragon": {
         "hp": 30,
@@ -118,6 +188,110 @@
         "luckiness": 7,
         "level": 4,
         "drop_item": "Potion",
-        "exp": 40
+        "exp": 40,
+        "skills": [
+            {
+                "Cure": {
+                    "attribute": "neutral",
+                    "hp_change": 30,
+                    "mp_change": 0,
+                    "sp_change": 0,
+                    "ep_change": 0,
+                    "strength_change": 0,
+                    "agility_change": 0,
+                    "vitality_change": 0,
+                    "dexterity_change": 0,
+                    "smartness_change": 0,
+                    "magic_power_change": 0,
+                    "mental_strength_change": 0,
+                    "luckiness_change": 0,
+                    "effective_time": 0,
+                    "durablity_change": 0,
+                    "weight": 0,
+                    "level": 1,
+                    "hp_spent": 0,
+                    "mp_spent": 10,
+                    "sp_spent": 2,
+                    "ep_spent": 0,
+                    "strength_multiplier": 0.0,
+                    "agility_multiplier": 0.0,
+                    "vitality_multiplier": 0.0,
+                    "dexterity_multiplier": 0.0,
+                    "smartness_multiplier": 0.1,
+                    "magic_power_multiplier": 0.5,
+                    "mental_strength_multiplier": 0.1,
+                    "luckiness_multiplier": 0.005,
+                    "is_in_fight": false
+                }
+            },
+            {
+                "Fire": {
+                    "attribute": "fire",
+                    "hp_change": -50,
+                    "mp_change": 0,
+                    "sp_change": 0,
+                    "ep_change": 0,
+                    "strength_change": 0,
+                    "agility_change": 0,
+                    "vitality_change": 0,
+                    "dexterity_change": 0,
+                    "smartness_change": 0,
+                    "magic_power_change": 0,
+                    "mental_strength_change": 0,
+                    "luckiness_change": 0,
+                    "effective_time": 0,
+                    "durablity_change": 0,
+                    "weight": 0,
+                    "level": 1,
+                    "hp_spent": 0,
+                    "mp_spent": 7,
+                    "sp_spent": 1,
+                    "ep_spent": 0,
+                    "strength_multiplier": 0.0,
+                    "agility_multiplier": 0.0,
+                    "vitality_multiplier": 0.0,
+                    "dexterity_multiplier": 0.0,
+                    "smartness_multiplier": 0.02,
+                    "magic_power_multiplier": 0.02,
+                    "mental_strength_multiplier": 0.03,
+                    "luckiness_multiplier": 0.005,
+                    "is_in_fight": true
+                }
+            },
+            {
+                "Thunder": {
+                    "attribute": "thunder",
+                    "hp_change": -50,
+                    "mp_change": 0,
+                    "sp_change": 0,
+                    "ep_change": 0,
+                    "strength_change": 0,
+                    "agility_change": 0,
+                    "vitality_change": 0,
+                    "dexterity_change": 0,
+                    "smartness_change": 0,
+                    "magic_power_change": 0,
+                    "mental_strength_change": 0,
+                    "luckiness_change": 0,
+                    "effective_time": 0,
+                    "durablity_change": 0,
+                    "weight": 0,
+                    "level": 1,
+                    "hp_spent": 0,
+                    "mp_spent": 7,
+                    "sp_spent": 1,
+                    "ep_spent": 0,
+                    "strength_multiplier": 0.0,
+                    "agility_multiplier": 0.0,
+                    "vitality_multiplier": 0.0,
+                    "dexterity_multiplier": 0.0,
+                    "smartness_multiplier": 0.2,
+                    "magic_power_multiplier": 0.4,
+                    "mental_strength_multiplier": 0.1,
+                    "luckiness_multiplier": 0.005,
+                    "is_in_fight": true
+                }
+            }
+        ]
     }
 }
