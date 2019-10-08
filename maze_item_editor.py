@@ -12,7 +12,7 @@ from lib.sub_func import filter_item_data_by_type
 file_path = os.path.join(data_dir,item_data_file_name)
 # When used, the item will creates the following effects if they have...
         
-
+# TODO: Add status defense effects.
 class Application(object):
 
     def __init__(self):
@@ -44,10 +44,8 @@ class Application(object):
         # Item that cure negative status effects.
         self.list_of_parameters_right_2_2 = ["cure_poison", "cure_curse", "cure_seal", "cure_starving", "cure_all_status"]
         
-        # Item that resist to the 
-
-        # TODO: Add the resitance to a attack adding status effects on player.
-        # Only applied to the equipment for now.
+        # Item that will prevents the status effects.
+        self.list_of_parameters_right_2_3 = ["poison_resistance", "curse_resistance", "seal_resistance", "starving_resistance"]
 
         self.list_of_parameters_left = ["magic_power_change","mental_strength_change", "luckiness_change", "effective_time", "durablity_change", "weight", "level"]
         self.start_window()
@@ -114,6 +112,15 @@ class Application(object):
             exec("""self.{0}_checkbutton = tk.Checkbutton(self.main_group_right_2_2,
         text = "{0}", onvalue = True, offvalue = False, variable = self.{0}_value)""".format(parameter_list))
             exec("self.{0}_checkbutton.pack(anchor=tk.W)". format(parameter_list))
+        
+        self.main_group_right_2_3 = tk.Frame(self.main_group_right_2)
+        self.main_group_right_2_3.pack()
+
+        for i,parameter_list in enumerate(self.list_of_parameters_right_2_3):
+            exec("""self.{0}_adjust_label = tk.Label(self.main_group_right_2_1, text = "{0}: " )""". format(parameter_list))
+            exec("self.{0}_adjust_label.grid(row = i, sticky = tk.NE,column = 0, padx = 3, pady =1)". format(parameter_list))
+            exec("self.{0}_input_box = tk.Entry(self.main_group_right_2_1)". format(parameter_list))
+            exec("self.{0}_input_box.grid(row = i, column = 1, padx = 10, pady =1, sticky = tk.N)". format(parameter_list))
 
         # Listbox Frame
         self.main_group_list_box_frame = tk.Frame(self.main_list_frame)
@@ -136,8 +143,7 @@ class Application(object):
         self.save_button.pack(side = tk.BOTTOM)
         self.root.mainloop()
 
-    # Refresh all saved item data to sort out its set data and sort
-    # all of the data.
+    # Refresh all saved item data by sorting item data by type
     def _refresh_item_data(self):
         tmp = []
         for i, _ in self.list_of_parameters_middle_1_1:
@@ -181,6 +187,9 @@ class Application(object):
         
         for i in self.list_of_parameters_right_2_2:
             exec("tmp[i] = self.{0}_value.get()".format(i))
+
+        for i in self.list_of_parameters_right_2_3:
+            exec("tmp[i] = float(self.{0}_input_box.get())".format(i))
 
         # Put & update the data of main item data.
         main_item_data[main_item_name] = tmp

@@ -1,6 +1,7 @@
 # Reading all necessary packages
 import sys
 sys.path.insert(0, 'lib/maze_generation.py')
+sys.path.insert(0, 'lib')
 
 import os
 import json 
@@ -364,7 +365,6 @@ class MainGame(object):
 
                     # Turn based fight. The player can firstly fight for the enemy this value is higher.
                     if uniform(0.8, 1.0)*self.player.object_data["agility"] > uniform(0.8,1.0)* enemy.object_data["agility"]:
-                        
                         # Player turn.
                         if _player_turn_normal_attack():
                             break
@@ -392,7 +392,6 @@ class MainGame(object):
                         if _player_turn_normal_attack():
                             break
                     
-                # TODO: Create the function that handles player's skills.
                 # Displays the player's status.
                 elif cursor_selection == 1:
                     skill_data = self._display_skills(True)
@@ -400,7 +399,6 @@ class MainGame(object):
                          
                         # Turn based fight. The player can firstly fight for the enemy this value is higher.
                         if uniform(0.8, 1.0)*self.player.object_data["agility"] > uniform(0.8,1.0)* enemy.object_data["agility"]:
-                            
                             # Player turn
                             if _turn_use_skill(skill_data,self.player, enemy):
                                 break
@@ -414,7 +412,6 @@ class MainGame(object):
                                 ,enemy,self.player, True, "Enemy"):
                                     return True
                         else:
-
                             # Enemy turn
                             if uniform (0, 1.0) < enemy_use_skill_possibility:
                                 if _enemy_turn_normal_attack():
@@ -430,23 +427,20 @@ class MainGame(object):
                         getch()
 
                     clear()
-                    """
-                    Escape from the enemy.
-                    The rate of the escape depends on the values of
-                    the success.
-                    """
+                
+                # Escape from the enemy.
+                # The rate of the escape depends on the values of
+                # the success.
                 # TODO: Enable player to use item.
                 elif cursor_selection == 2:            
                     print("This feature will be implemented later...")
                     getch()
                     clear()
-                    
-                
+
                 elif cursor_selection == 3:
                     print("This feature will be implemented later...")
                     getch()
                     clear()
-                    
 
                 # Escape function.
                 # Escape will be successful if the value is bigger than enemy's.
@@ -458,7 +452,6 @@ class MainGame(object):
                     else:
                         print("Cannot escape!")
                         _enemy_turn_normal_attack()
-
             clear()
         clear()
         
@@ -486,7 +479,7 @@ class MainGame(object):
         
         self.original_map_grid = deepcopy(self.map_grid)
 
-        # TODO: Create and show the hidden map grid.
+        # Create hidden map grid.
         self.hidden_map_grid = [["." for _ in range(len(self.map_grid))] for _ in range(len(self.map_grid[0]))]
        
         self.direction = direction

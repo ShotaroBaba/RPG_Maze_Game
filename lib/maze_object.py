@@ -85,13 +85,34 @@ class MazeObject(object):
         self.object_data["current_mental_strength"] = self.object_data["mental_strength"]
         self.object_data["current_luckiness"]  = self.object_data["luckiness"]
 
-
+        # The resistance of the potential status effects.
         self.object_data["poison_resist"] = json_data["poison_resist"]\
             if json_data != {} and "poison_resist" in json_data.keys() else 0
         self.object_data["paralyze_resist"] = json_data["paralyze_resist"]\
             if json_data != {} and "paralyze_resist" in json_data.keys() else 0
         self.object_data["curse_resist"] = json_data["curse_resist"]\
             if json_data != {} and "curse_resist" in json_data.keys() else 0
+        self.object_data["seal_resist"] = json_data["seal_resist"]\
+            if json_data != {} and "seal_resist" in json_data.keys() else 0
+        self.object_data["starving_resist"] = json_data["starving_resist"]\
+            if json_data != {} and "starving_resist" in json_data.keys() else 0
+
+        # The count showing the effective duration of status effects.
+        self.object_data["poison_count"] = json_data["poison_count"]\
+            if json_data != {} and "poison_count" in json_data.keys() else 0
+        self.object_data["paralyze_count"] = json_data["paralyze_count"]\
+            if json_data != {} and "paralyze_count" in json_data.keys() else 0
+        self.object_data["curse_count"] = json_data["curse_count"]\
+            if json_data != {} and "curse_count" in json_data.keys() else 0
+        self.object_data["seal_count"] = json_data["seal_count"]\
+            if json_data != {} and "seal_count" in json_data.keys() else 0
+        self.object_data["starving_count"] = json_data["starving_count"]\
+            if json_data != {} and "starving_count" in json_data.keys() else 0
+
+        self.object_data["unable_to_use_skill"] = json_data["unable_to_use_skill"]\
+            if json_data != {} and "unable_to_use_skill" in json_data.keys() else False
+        self.object_data["cannot_act"] = json_data["cannot_act"]\
+            if json_data != {} and "cannot_act" in json_data.keys() else False
 
         # Check whether it is a player, an enemy or just an object
         self.object_data["player_name"]  = json_data["player_name"]\
@@ -125,9 +146,6 @@ class MazeObject(object):
             if json_data != {} and "right_finger" in json_data.keys() else []
         self.object_data["left_finger"]  = json_data["left_finger"]\
             if json_data != {} and "left_finger" in json_data.keys() else []
-
-        # Initialise paramteres based on player's equipment.
-        self._init_parameters_equipment()
 
         # Status is normal by default
         # if the status is normal, then the player is not affected.
@@ -187,48 +205,6 @@ class MazeObject(object):
         self.object_data["drop_item"]  = json_data["drop_item"]\
             if json_data != {} and "drop_item" in json_data.keys() else {}
 
-
-    # Apply skills to a certain person, enemy or items
-    # NOTE: Skills will be a set of json data.
-    def use_skills(self, skill_name, target):
-        self.skills[skill_name].activate_skills(target)
-        pass
-
-    # Adjust parameters based on the equipment
-    def _init_parameters_equipment(self):
-        pass
-
-    # Player can wear his or her own weapon, accessory or armor
-    def attach_item(self, item):
-        pass
-
-    # Player can remove his or her own weapon, accessory or armor
-    def detach_item(self, item):
-        pass
-
-    def _initialise_json(self):
-        pass
-
-    # Initialise player when the game is started.
-    def initialise_player(self):
-        pass
-
-    # Used for generating json data for saving character's data.
-    def return_character_data_json(self):
-        pass
-
-    # Move characters when the enemy
-    def move_object_up(self, key_event):
-        pass
-
-    def move_object_down(self, key_event):
-        pass
-
-    def move_object_left(self, key_event):
-        pass
-    
-    def move_object_right(self, key_event):
-        pass
     
     # Update values everytime the player walks or level-up.
     # TODO: Added several features later...
@@ -243,10 +219,8 @@ class MazeObject(object):
 
         # Initialise before assigning the value...
         for j in numerical_player_strengh:
-            self.object_data["current_max_" + j] = self.object_data[j]
+            self.object_data["current_max_" + j] = self.object_data["current_" + j]
         
-        for j in non_numerical_player_strength:
-            self.object_data["current_" + j] = self.object_data[j]
         
         ##################################
         # Calculation part.
