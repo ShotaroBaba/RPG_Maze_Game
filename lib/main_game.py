@@ -1054,11 +1054,18 @@ class MainGame(object):
 
             if tmp_key == b'\r':
                 
-                if selection_idx < 3 and self.player.object_data["bonus_point"] > 0:
-                    self.player.object_data[selection_str_list[selection_idx]] += 5
+                # Raise HP, MP and SP by 10.
+                if selection_idx < 4 and self.player.object_data["bonus_point"] > 0:
+                    self.player.object_data[selection_str_list[selection_idx]] += 10
                     self.player.object_data["bonus_point"] -= 1
 
-                elif selection_idx >= 3 and selection_idx < menu_length - 1 and self.player.object_data["bonus_point"] > 0:
+                # Raise EP by 25.
+                elif selection_idx == 3 and self.player.object_data["bonus_point"] > 0:
+                    self.player.object_data[selection_str_list[selection_idx]] += 25
+                    self.player.object_data["bonus_point"] -= 1
+
+                # Raise the other status by 1.
+                elif selection_idx >= 4 and selection_idx < menu_length - 1 and self.player.object_data["bonus_point"] > 0:
                     self.player.object_data[selection_str_list[selection_idx]] += 1
                     self.player.object_data["bonus_point"] -= 1
 

@@ -24,22 +24,27 @@ class Application(object):
         self.list_of_parameters_right = ["skill_name","hp_change", "mp_change", "sp_change", "ep_change", 
         "strength_change", "agility_change", "vitality_change", "dexterity_change", "smartness_change"]
         
-        self.list_of_parameters_middle_1 =[
+        self.list_of_parameters_middle_1_1 =[
         ("fire", "fire"),
         ("water", "water"),
         ("thunder","thunder"),
         ("light", "light"),
         ("dark", "dark"),
         ("neutral", "neutral")]
+            # Object hp decrases gradually
+        
+        self.list_of_parameters_middle_1_2 = ["poison_possiblity", "curse_possibility", "seal_possibility", "paralyzed_possibility",
+        "starving_possibility"]
 
+        # Effects that cure negative status effects.
+        self.list_of_parameters_middle_3_2 = ["cure_poison", "cure_curse", "cure_seal", "cure_starving"]
+        
 
         self.list_of_parameters_middle_2 = ["strength_multiplier", "agility_multiplier", "vitality_multiplier", "dexterity_multiplier", 
         "smartness_multiplier","magic_power_multiplier","mental_strength_multiplier", "luckiness_multiplier"]
-        # TODO: Implement status changes after implementing skills.
-        # self.list_of_parameters_middle_2 = ["cure_poison","cure_paralyze","cure_curse","cure_all_status"]
         
         # Temporary status change during the battle.
-        self.list_of_parameters_left = ["magic_power_change","mental_strength_change", "luckiness_change", "effective_time", "durablity_change", "weight", "level"]
+        self.list_of_parameters_middle_3_1 = ["magic_power_change","mental_strength_change", "luckiness_change", "effective_time", "durablity_change", "weight", "level"]
         self.list_of_parameters_left_2 = ["hp_spent", "mp_spent", "sp_spent", "ep_spent"]
         self.start_window()
 
@@ -66,14 +71,26 @@ class Application(object):
         self.main_group_left_2.grid(row = 1, column = 0, padx = 3, pady =3, sticky = tk.N)
         
         # Checkbox Frame
-        self.main_group_radiobutton_1 = tk.Frame(self.main_list_frame)
-        self.main_group_radiobutton_1.grid(row = 0, column = 1, padx = 3, pady = 3, sticky = tk.N)
+        self.main_group_radiobutton_1_1 = tk.Frame(self.main_list_frame)
+        self.main_group_radiobutton_1_1.grid(row = 0, column = 1, padx = 3, pady = 3, sticky = tk.N)
+
+        # Non_checkbox (middle part 2)
+        self.main_group_status_effects_1_2 = tk.Frame(self.main_list_frame)
+        self.main_group_status_effects_1_2.grid(row = 1, column = 1, padx = 3, pady = 3, sticky = tk.N)
+
+        # Checkbox Frame
+        self.main_group_radiobutton_1_3 = tk.Frame(self.main_list_frame)
+        self.main_group_radiobutton_1_3.grid(row = 0, column = 1, padx = 3, pady = 3, sticky = tk.N)
 
         # Non-checkbox Frame (middle part 1)
-        self.main_group_right = tk.Frame(self.main_list_frame)
-        self.main_group_right.grid(row = 0, column = 2, padx = 3, pady =3, sticky = tk.N)
+        self.main_group_middle_3_1 = tk.Frame(self.main_list_frame)
+        self.main_group_middle_3_1.grid(row = 0, column = 2, padx = 3, pady =3, sticky = tk.N)
         
-        # Non-checkbox Frame (middle part 2)
+        # Checkbox frame (middle part 2)
+        self.main_group_middle_checkbox_3_2 = tk.Frame(self.main_list_frame)
+        self.main_group_middle_checkbox_3_2.grid(row = 1, column = 2, padx = 3, pady = 3, sticky = tk.N)
+
+        # Non-checkbox Frame (middle part e)
         self.main_group_entry_middle_frame_2 = tk.Frame(self.main_list_frame)
         self.main_group_entry_middle_frame_2.grid(row = 0, column = 3, padx = 3, pady =3, sticky = tk.N)
 
@@ -97,6 +114,12 @@ class Application(object):
             exec("self.{0}_input_box = tk.Entry(self.main_group_left)". format(parameter_list))
             exec("self.{0}_input_box.grid(row = i, column = 1, padx = 10, pady =1)". format(parameter_list))
 
+        for i,parameter_list in enumerate(self.list_of_parameters_middle_1_2):
+            exec("""self.{0}_adjust_label = tk.Label(self.main_group_status_effects_1_2, text = "{0}: " )""". format(parameter_list))
+            exec("self.{0}_adjust_label.grid(row = i, sticky = tk.E,column = 0, padx = 3, pady =1)". format(parameter_list))
+            exec("self.{0}_input_box = tk.Entry(self.main_group_status_effects_1_2)". format(parameter_list))
+            exec("self.{0}_input_box.grid(row = i, column = 1, padx = 10, pady =1)". format(parameter_list))
+
         # Spent mp displayed
         for i,parameter_list in enumerate(self.list_of_parameters_left_2):
             exec("""self.{0}_adjust_label = tk.Label(self.main_group_left_2, text = "{0}: " )""". format(parameter_list))
@@ -108,14 +131,14 @@ class Application(object):
         self.middle_radio_button_value_1 = tk.StringVar()
         self.middle_radio_button_value_1.set("L") 
 
-        for text, mode in self.list_of_parameters_middle_1:
-            self.radiobutton_middle_1 = tk.Radiobutton(self.main_group_radiobutton_1, text=text,
+        for text, mode in self.list_of_parameters_middle_1_1:
+            self.radiobutton_middle_1 = tk.Radiobutton(self.main_group_radiobutton_1_1, text=text,
                             variable=self.middle_radio_button_value_1, value=mode)
             self.radiobutton_middle_1.pack(anchor=tk.W)
 
         # Set if it can be used in player's menu.
         self.is_in_fight_value = tk.BooleanVar()
-        self.checkbutton_if_used_in_menu = tk.Checkbutton(self.main_group_radiobutton_1,
+        self.checkbutton_if_used_in_menu = tk.Checkbutton(self.main_group_radiobutton_1_1,
         text = "is_in_fight", onvalue = True, offvalue = False, variable = self.is_in_fight_value)
         self.checkbutton_if_used_in_menu.pack(anchor=tk.W)
 
@@ -125,22 +148,42 @@ class Application(object):
             exec("self.{0}_input_box = tk.Entry(self.main_group_entry_middle_frame_2)". format(parameter_list))
             exec("self.{0}_input_box.grid(row = i, column = 1, padx = 10, pady =1)". format(parameter_list))
 
-        for i,parameter_list in enumerate(self.list_of_parameters_left):
-            exec("""self.{0}_adjust_label = tk.Label(self.main_group_right, text = "{0}: " )""". format(parameter_list))
+        for i,parameter_list in enumerate(self.list_of_parameters_middle_3_1):
+            exec("""self.{0}_adjust_label = tk.Label(self.main_group_middle_3_1, text = "{0}: " )""". format(parameter_list))
             exec("self.{0}_adjust_label.grid(row = i, sticky = tk.NE,column = 0, padx = 3, pady =1)". format(parameter_list))
-            exec("self.{0}_input_box = tk.Entry(self.main_group_right)". format(parameter_list))
+            exec("self.{0}_input_box = tk.Entry(self.main_group_middle_3_1)". format(parameter_list))
             exec("self.{0}_input_box.grid(row = i, column = 1, padx = 10, pady =1, sticky = tk.N)". format(parameter_list))
+    
+        for i,parameter_list in enumerate(self.list_of_parameters_middle_3_2):
+            exec("""self.{0}_value = tk.BooleanVar()""". format(parameter_list))
+            exec("""self.{0}_checkbutton = tk.Checkbutton(self.main_group_middle_checkbox_3_2,
+        text = "{0}", onvalue = True, offvalue = False, variable = self.{0}_value)""".format(parameter_list))
+            exec("self.{0}_checkbutton.pack(anchor=tk.W)". format(parameter_list))
 
-        
         self.main_group_list_box.bind("<Double-1>", self._load_skill_data)
-
-
         self.exit_button = tk.Button(self.main_group, text = "exit", command = exit)
         self.exit_button.pack(side = tk.BOTTOM)
-
         self.save_button = tk.Button(self.main_group, text = "save", command = self._save_skill_data)
         self.save_button.pack(side = tk.BOTTOM)
         self.root.mainloop()
+    
+    # Refresh the saved skill data
+    def _refresh_saved_skill_data(self):
+        # 1. Check folder existence
+        if not os.path.isdir(data_dir):
+            os.mkdir(data_dir)
+
+        # 2. Check file existence
+        if not os.path.isfile(file_path):
+            open(file_path, 'a').close()
+
+        # Main frame for putting monster
+        main_skill_data = {}
+
+        # Get skill name
+        main_skill_name = eval("self.skill_name_input_box.get()")
+        tmp = {}
+        
 
     def _save_skill_data(self):
         # 1. Check folder existence
@@ -168,13 +211,18 @@ class Application(object):
         # Record the attribute 
         tmp["attribute"] = self.middle_radio_button_value_1.get()
 
-        for i in self.list_of_parameters_right[1:] + self.list_of_parameters_left + self.list_of_parameters_left_2:
+        for i in self.list_of_parameters_right[1:] + self.list_of_parameters_middle_3_1 + self.list_of_parameters_left_2 +\
+            self.list_of_parameters_middle_1_2:
+
             exec("tmp[i] = int(self.{0}_input_box.get())".format(i))
         
         for i in self.list_of_parameters_middle_2:
             exec("tmp[i] = float(self.{0}_input_box.get())".format(i))
         
         tmp["is_in_fight"] = self.is_in_fight_value.get()
+
+        for i in self.list_of_parameters_middle_3_2:
+            exec("tmp[i] = self.{0}_value.get()".format(i))
 
         # Put & update the data of main skill data.
         main_skill_data[main_skill_name] = tmp
@@ -196,7 +244,7 @@ class Application(object):
         #     print("Please input a proper value.")
     
     # Load skill data from selection list.
-    def _load_skill_data(self,evt):
+    def _load_skill_data(self,evt = None, skill_name = None):
         
         w = evt.widget
         idx = int(w.curselection()[0])
@@ -212,7 +260,7 @@ class Application(object):
             except:
                 exec("self.{0}_input_box.insert(0,{1})".format(parameter_list,0))
         
-        for parameter_list in self.list_of_parameters_left:
+        for parameter_list in self.list_of_parameters_middle_3_1:
             exec("self.{0}_input_box.delete(0,tk.END)".format(parameter_list))
             try:
                 exec("self.{0}_input_box.insert(0,{1})".format(parameter_list,self.skill_list[value][parameter_list]))
@@ -233,17 +281,28 @@ class Application(object):
             except:
                 exec("self.{0}_input_box.insert(0,{1})".format(parameter_list,0))
 
+        for parameter_list in self.list_of_parameters_middle_1_2:
+            exec("self.{0}_input_box.delete(0,tk.END)".format(parameter_list))
+            try:
+                exec("self.{0}_input_box.insert(0,{1})".format(parameter_list,self.skill_list[value][parameter_list]))
+            except:
+                exec("self.{0}_input_box.insert(0,{1})".format(parameter_list,0))
 
         try:
             self.middle_radio_button_value_1.set(self.skill_list[value]["attribute"])
         except:
-            self.middle_radio_button_value_1.set(self.list_of_parameters_middle_1[0][0])
+            self.middle_radio_button_value_1.set(self.list_of_parameters_middle_1_1[0][0])
 
         try:
             self.is_in_fight_value.set(self.skill_list[value]["is_in_fight"])
         except:
             self.is_in_fight_value.set(False)
-
+        
+        for i in self.list_of_parameters_middle_3_2:
+            try:
+                exec("self.{0}_value.set(self.skill_list[value][i])".format(i))
+            except:
+                exec("self.{0}_value.set(False)".format(i))
 
 # Start the application
 def main():

@@ -1,12 +1,12 @@
 import sys
 sys.path.insert(0, 'lib')
-
+sys.path.append('lib')
 import os
 
 import json
 from lib.default_values import *
 import tkinter as tk
-from sub_func import filter_item_data_by_type
+from lib.sub_func import filter_item_data_by_type
 
 # Maze item editor
 file_path = os.path.join(data_dir,item_data_file_name)
@@ -30,7 +30,7 @@ class Application(object):
         "strength_change", "agility_change", "vitality_change", "dexterity_change", "smartness_change",]
         
         
-        self.list_of_parameters_middle_1 =[
+        self.list_of_parameters_middle_1_1 =[
         ("is_item", "is_item"),
         ("is_weapon", "is_weapon"),
         ("is_body_armor", "is_body_armor"),
@@ -42,8 +42,10 @@ class Application(object):
         ("is_skill_book","is_skill_book")]
         
         # Item that cure negative status effects.
-        self.list_of_parameters_middle_2 = ["cure_poison","cure_paralyze","cure_curse","cure_seal","cure_all_status"]
+        self.list_of_parameters_right_2_2 = ["cure_poison", "cure_curse", "cure_seal", "cure_starving", "cure_all_status"]
         
+        # Item that resist to the 
+
         # TODO: Add the resitance to a attack adding status effects on player.
         # Only applied to the equipment for now.
 
@@ -78,29 +80,44 @@ class Application(object):
             exec("self.{0}_input_box.grid(row = i, column = 1, padx = 10, pady =1)". format(parameter_list))
 
         # Checkbox Frame
-        self.main_group_radiobutton_1 = tk.Frame(self.main_list_frame)
-        self.main_group_radiobutton_1.grid(row = 0, column = 1, padx = 3, pady = 3, sticky = tk.N)
+        self.main_group_radiobutton_1_1 = tk.Frame(self.main_list_frame)
+        self.main_group_radiobutton_1_1.grid(row = 0, column = 1, padx = 3, pady = 3, sticky = tk.N)
 
-        self.middle_radio_button_value_1 = tk.StringVar()
-        self.middle_radio_button_value_1.set("L") 
+        self.middle_radio_button_value_1_1 = tk.StringVar()
+        self.middle_radio_button_value_1_1.set("L") 
 
-        for text, mode in self.list_of_parameters_middle_1:
-            self.radiobutton_middle_1 = tk.Radiobutton(self.main_group_radiobutton_1, text=text,
-                            variable=self.middle_radio_button_value_1, value=mode)
-            self.radiobutton_middle_1.pack(anchor=tk.W)
-
-        self.main_group_right = tk.Frame(self.main_list_frame)
-        self.main_group_right.grid(row = 0, column = 2, padx = 3, pady =3, sticky = tk.N)
+        for text, mode in self.list_of_parameters_middle_1_1:
+            self.radiobutton_middle_1_1 = tk.Radiobutton(self.main_group_radiobutton_1_1, text=text,
+                            variable=self.middle_radio_button_value_1_1, value=mode)
+            self.radiobutton_middle_1_1.pack()
         
+        self.middle_status_checkbox_1_2 = tk.Frame(self.main_list_frame)
+        self.middle_status_checkbox_1_2.grid(row = 1, column = 2, padx = 3, pady = 3, sticky = tk.N)
+
+        self.main_group_right_2 = tk.Frame(self.main_list_frame)
+        self.main_group_right_2.grid(row = 0, column = 2, padx = 3, pady = 3, sticky = tk.N)
+        self.main_group_right_2_1 = tk.Frame(self.main_group_right_2)
+        self.main_group_right_2_1.pack()
+
         for i,parameter_list in enumerate(self.list_of_parameters_left):
-            exec("""self.{0}_adjust_label = tk.Label(self.main_group_right, text = "{0}: " )""". format(parameter_list))
+            exec("""self.{0}_adjust_label = tk.Label(self.main_group_right_2_1, text = "{0}: " )""". format(parameter_list))
             exec("self.{0}_adjust_label.grid(row = i, sticky = tk.NE,column = 0, padx = 3, pady =1)". format(parameter_list))
-            exec("self.{0}_input_box = tk.Entry(self.main_group_right)". format(parameter_list))
+            exec("self.{0}_input_box = tk.Entry(self.main_group_right_2_1)". format(parameter_list))
             exec("self.{0}_input_box.grid(row = i, column = 1, padx = 10, pady =1, sticky = tk.N)". format(parameter_list))
+
+
+        self.main_group_right_2_2 = tk.Frame(self.main_group_right_2)
+        self.main_group_right_2_2.pack()
+
+        for i,parameter_list in enumerate(self.list_of_parameters_right_2_2):
+            exec("""self.{0}_value = tk.BooleanVar()""". format(parameter_list))
+            exec("""self.{0}_checkbutton = tk.Checkbutton(self.main_group_right_2_2,
+        text = "{0}", onvalue = True, offvalue = False, variable = self.{0}_value)""".format(parameter_list))
+            exec("self.{0}_checkbutton.pack(anchor=tk.W)". format(parameter_list))
 
         # Listbox Frame
         self.main_group_list_box_frame = tk.Frame(self.main_list_frame)
-        self.main_group_list_box_frame.grid(row = 0, column = 3, padx = 3, pady = 3, sticky = tk.NS)
+        self.main_group_list_box_frame.grid(row = 0, column = 4, padx = 3, pady = 3, sticky = tk.NS)
         self.main_group_list_box_scroll = tk.Scrollbar(self.main_group_list_box_frame)
         self.main_group_list_box_scroll.pack(side = tk.RIGHT, fill = tk.Y)
         self.main_group_list_box = tk.Listbox(self.main_group_list_box_frame, yscrollcommand = self.main_group_list_box_scroll.set)
@@ -123,7 +140,7 @@ class Application(object):
     # all of the data.
     def _refresh_item_data(self):
         tmp = []
-        for i, _ in self.list_of_parameters_middle_1:
+        for i, _ in self.list_of_parameters_middle_1_1:
             tmp +=(filter_item_data_by_type(self.item_list, i))
         
         self.item_list = dict(tmp)
@@ -153,8 +170,8 @@ class Application(object):
 
         
         # Reload the list after saving item data.
-        for i in [x[0] for x in self.list_of_parameters_middle_1]:
-            if i == self.middle_radio_button_value_1.get():
+        for i in [x[0] for x in self.list_of_parameters_middle_1_1]:
+            if i == self.middle_radio_button_value_1_1.get():
                 tmp[i] = True
             else:
                 tmp[i] = False
@@ -162,6 +179,9 @@ class Application(object):
         for i in self.list_of_parameters_right[1:] + self.list_of_parameters_left:
             exec("tmp[i] = int(self.{0}_input_box.get())".format(i))
         
+        for i in self.list_of_parameters_right_2_2:
+            exec("tmp[i] = self.{0}_value.get()".format(i))
+
         # Put & update the data of main item data.
         main_item_data[main_item_name] = tmp
 
@@ -214,13 +234,17 @@ class Application(object):
         
         # Reload the list after saving item data.
         try:
-            for i in [x[0] for x in self.list_of_parameters_middle_1]:
+            for i in [x[0] for x in self.list_of_parameters_middle_1_1]:
                 if self.item_list[value][i]:
-                    self.middle_radio_button_value_1.set(i)
+                    self.middle_radio_button_value_1_1.set(i)
         except:
-            self.middle_radio_button_value_1.set(self.list_of_parameters_middle_1[0][0])
+            self.middle_radio_button_value_1_1.set(self.list_of_parameters_middle_1_1[0][0])
 
-
+        for i in self.list_of_parameters_right_2_2:
+            try:
+                exec("self.{0}_value.set(self.item_list[value][i])".format(i))
+            except:
+                exec("self.{0}_value.set(False)".format(i))
 
 # Start the application
 def main():

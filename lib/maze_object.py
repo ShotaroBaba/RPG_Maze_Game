@@ -132,7 +132,7 @@ class MazeObject(object):
         # Status is normal by default
         # if the status is normal, then the player is not affected.
         self.object_data["status"]  = json_data["status"]\
-            if json_data != {} and "status" in json_data.keys() else "Normal"
+            if json_data != {} and "status" in json_data.keys() else []
 
         # By default, the Objects's position is unknown.
         # It is only applied to the player.
@@ -304,12 +304,12 @@ class MazeObject(object):
             print("Player reached to level {}".format(self.object_data["level"]))
             
             # Randomly allocate the values once the level is up
-            for _ in range(5 + (self.object_data["level"] // 10)):
+            for _ in range(5 + 5 * (self.object_data["level"] // 10)):
                 tmp_choice = choice(numerical_player_strengh + non_numerical_player_strength)
                 
                 if tmp_choice in numerical_player_strengh:
-                    self.object_data[tmp_choice] += 5
-                    print("The {} value increases by 5!".format(tmp_choice))
+                    self.object_data[tmp_choice] += 10
+                    print("The {} value increases by 10!".format(tmp_choice))
                 else:
                     self.object_data[tmp_choice] += 1
                     print("The {} value increases by 1!".format(tmp_choice))

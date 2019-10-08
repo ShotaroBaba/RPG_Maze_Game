@@ -4,6 +4,7 @@ from random import choice
 from random import uniform
 from functools import reduce
 from getch import _Getch
+from maze_object import MazeObject
 
 getch = _Getch()
 # class Item(object):
@@ -207,7 +208,38 @@ def use_skill_sub(player,skill_data,changed_value):
     
     return int(round(tmp,0))
 
-# Equip item for player.
-# All item data is different.
-def equip_item(player, item_data):
-    pass
+# Put the status effects on any characters or creatures on Maze.
+def affects_status_on_player(maze_object: MazeObject):
+    
+    # This effects is effective until its development is over,
+    # The status effects can be multiple.
+    
+    # Object hp decrases gradually
+    if "poison" in maze_object.object_data["status_effects"]:
+        pass
+    
+    # All object's status becomes half.
+    elif "curse" in maze_object.object_data["status_effects"]:
+        pass
+
+    # Objects are unable to use their skills.
+    elif "seal" in maze_object.object_data["status_effects"]:
+        pass
+    
+    # Object cannot move and act for a certain amount of time.
+    elif "paralyzed" in maze_object.object_data["status effects"]:
+        pass 
+
+    # The reduction of EP becomes more faster.
+    elif "starving" in maze_object.object_data["status_effects"]:
+        pass
+
+# Add the status effects on the player.
+# This will only take place 
+# def put_status_effects_on_player(skill_data):
+#     pass
+
+# # Equip item for player.
+# # All item data is different.
+# def equip_item(player, item_data):
+#     pass

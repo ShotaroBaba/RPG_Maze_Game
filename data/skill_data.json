@@ -21,6 +21,11 @@
         "mp_spent": 10,
         "sp_spent": 2,
         "ep_spent": 0,
+        "poison_possiblity": 0,
+        "curse_possibility": 0,
+        "seal_possibility": 0,
+        "paralyzed_possibility": 0,
+        "starving_possibility": 0,
         "strength_multiplier": 0.0,
         "agility_multiplier": 0.0,
         "vitality_multiplier": 0.0,
@@ -29,7 +34,12 @@
         "magic_power_multiplier": 0.5,
         "mental_strength_multiplier": 0.1,
         "luckiness_multiplier": 0.005,
-        "is_in_fight": false
+        "is_in_fight": false,
+        "cure_poison": false,
+        "cure_curse": false,
+        "cure_seal": false,
+        "cure_starving": false,
+        "cure_all_status": false
     },
     "Fire": {
         "attribute": "fire",
@@ -53,6 +63,11 @@
         "mp_spent": 7,
         "sp_spent": 1,
         "ep_spent": 0,
+        "poison_possiblity": 0,
+        "curse_possibility": 0,
+        "seal_possibility": 0,
+        "paralyzed_possibility": 0,
+        "starving_possibility": 0,
         "strength_multiplier": 0.0,
         "agility_multiplier": 0.0,
         "vitality_multiplier": 0.0,
@@ -61,7 +76,12 @@
         "magic_power_multiplier": 0.02,
         "mental_strength_multiplier": 0.03,
         "luckiness_multiplier": 0.005,
-        "is_in_fight": true
+        "is_in_fight": true,
+        "cure_poison": false,
+        "cure_curse": false,
+        "cure_seal": false,
+        "cure_starving": false,
+        "cure_all_status": false
     },
     "Thunder": {
         "attribute": "thunder",
@@ -85,6 +105,11 @@
         "mp_spent": 7,
         "sp_spent": 1,
         "ep_spent": 0,
+        "poison_possiblity": 0,
+        "curse_possibility": 0,
+        "seal_possibility": 0,
+        "paralyzed_possibility": 0,
+        "starving_possibility": 0,
         "strength_multiplier": 0.0,
         "agility_multiplier": 0.0,
         "vitality_multiplier": 0.0,
@@ -93,7 +118,12 @@
         "magic_power_multiplier": 0.4,
         "mental_strength_multiplier": 0.1,
         "luckiness_multiplier": 0.005,
-        "is_in_fight": true
+        "is_in_fight": true,
+        "cure_poison": false,
+        "cure_curse": false,
+        "cure_seal": false,
+        "cure_starving": false,
+        "cure_all_status": false
     },
     "Water": {
         "attribute": "water",
@@ -117,6 +147,11 @@
         "mp_spent": 7,
         "sp_spent": 1,
         "ep_spent": 0,
+        "poison_possiblity": 0,
+        "curse_possibility": 0,
+        "seal_possibility": 0,
+        "paralyzed_possibility": 0,
+        "starving_possibility": 0,
         "strength_multiplier": 0.0,
         "agility_multiplier": 0.0,
         "vitality_multiplier": 0.0,
@@ -125,7 +160,12 @@
         "magic_power_multiplier": 0.4,
         "mental_strength_multiplier": 0.1,
         "luckiness_multiplier": 0.005,
-        "is_in_fight": true
+        "is_in_fight": true,
+        "cure_poison": false,
+        "cure_curse": false,
+        "cure_seal": false,
+        "cure_starving": false,
+        "cure_all_status": false
     },
     "Dummy_1": {
         "attribute": "water",
@@ -149,6 +189,11 @@
         "mp_spent": 0,
         "sp_spent": 0,
         "ep_spent": 0,
+        "poison_possiblity": 0,
+        "curse_possibility": 0,
+        "seal_possibility": 0,
+        "paralyzed_possibility": 0,
+        "starving_possibility": 0,
         "strength_multiplier": 0.0,
         "agility_multiplier": 0.0,
         "vitality_multiplier": 0.0,
@@ -157,7 +202,12 @@
         "magic_power_multiplier": 0.0,
         "mental_strength_multiplier": 0.0,
         "luckiness_multiplier": 0.0001,
-        "is_in_fight": true
+        "is_in_fight": true,
+        "cure_poison": false,
+        "cure_curse": false,
+        "cure_seal": false,
+        "cure_starving": false,
+        "cure_all_status": false
     },
     "Dummy_2": {
         "attribute": "water",
@@ -181,6 +231,11 @@
         "mp_spent": 0,
         "sp_spent": 0,
         "ep_spent": 0,
+        "poison_possiblity": 0,
+        "curse_possibility": 0,
+        "seal_possibility": 0,
+        "paralyzed_possibility": 0,
+        "starving_possibility": 0,
         "strength_multiplier": 0.0,
         "agility_multiplier": 0.0,
         "vitality_multiplier": 0.0,
@@ -189,6 +244,11 @@
         "magic_power_multiplier": 0.0,
         "mental_strength_multiplier": 0.0,
         "luckiness_multiplier": 0.0001,
-        "is_in_fight": true
+        "is_in_fight": true,
+        "cure_poison": false,
+        "cure_curse": false,
+        "cure_seal": false,
+        "cure_starving": false,
+        "cure_all_status": false
     }
 }
