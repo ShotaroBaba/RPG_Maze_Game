@@ -18,8 +18,8 @@ from default_values import *
 from sub_func import *
 
 # Possibility of using the skill: 20%
-# To test the skills using enemy: Set this to 100% (1.0)
-enemy_use_skill_possibility = 0.0
+# To test the skills using enemy: Set this to 100% (-.0)
+enemy_use_skill_possibility = 0.2
 
 # The value which determine the difficulty of level increase.
 constant_next_level_exp = 1.4
@@ -633,6 +633,7 @@ class MainGame(object):
                 if cursor_selection == 4:
                     self._display_equitable_items()
 
+                # The feature will be added later on.
                 if cursor_selection == 5:  
                     break
 
