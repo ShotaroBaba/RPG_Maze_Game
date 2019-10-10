@@ -33,11 +33,11 @@ class Application(object):
         ("neutral", "neutral")]
             # Object hp decrases gradually
         
-        self.list_of_parameters_middle_1_2 = ["poison_possiblity", "curse_possibility", "seal_possibility", "paralyzed_possibility",
+        self.list_of_parameters_middle_1_2 = ["poison_possiblity", "curse_possibility", "seal_possibility", "paralyze_possibility",
         "starving_possibility"]
 
         # Effects that cure negative status effects.
-        self.list_of_parameters_middle_3_2 = ["cure_poison", "cure_curse", "cure_seal", "cure_starving"]
+        self.list_of_parameters_middle_3_2 = ["cure_poison", "cure_curse", "cure_seal", "cure_paralyze", "cure_starving"]
         
 
         self.list_of_parameters_middle_2 = ["strength_multiplier", "agility_multiplier", "vitality_multiplier", "dexterity_multiplier", 

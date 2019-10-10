@@ -99,32 +99,82 @@ def use_item(player: MazeObject,item_name,item_data):
             min(player.object_data["current_ep"]  + item_data[item_name]["ep_change"], player.object_data["current_max_ep"])
         ep_changed = True
 
-    if "poison" in player.object_data["status_effects"]:
+    if "poison" in player.object_data["status_effects"] and item_data[item_name]["cure_poison"]:
         player.object_data.remove("poison")
         player.object_data["poison_count"] = 0
-        pass
 
-    if "curse" in player.object_data["status_effects"]:
+    if "curse" in player.object_data["status_effects"] and item_data[item_name]["cure_curse"]:
         player.object_data.remove("curse")
         player.object_data["curse_count"] = 0
 
-    if "seal" in player.object_data["status_effects"]:
+    if "seal" in player.object_data["status_effects"] and item_data[item_name]["cure_seal"]:
         player.object_data.remove("seal")
         player.object_data["seal_count"] = 0
 
-    if "paralyze" in player.object_data["status_effects"]:
+    if "paralyze" in player.object_data["status_effects"] and item_data[item_name]["cure_paralyze"]:
         player.object_data.remove("paralyze")
         player.object_data["paralyze_count"] = 0
 
-
-    # The reduction of EP becomes more faster.
-    if "starving" in player.object_data["status_effects"]:
+    if "starving" in player.object_data["status_effects"] and item_data[item_name]["cure_starving"]:
         player.object_data.remove("starving")
         player.object_data["starving_count"] = 0
 
     return hp_changed or mp_changed or sp_changed or ep_changed
 
-def use_skill(skill_user, skill_data, target_object = None, is_in_menu = True):
+def remove_status_effects(user:MazeObject, skill_data, skill_name):
+
+    is_removed_status_effect = False
+
+    if "poison" in user.object_data["status_effects"] and skill_data[skill_name]["cure_poison"]:
+        user.object_data["status_effects"].remove("poison")
+        is_removed_status_effect = True
+
+    if "curse" in user.object_data["status_effects"] and skill_data[skill_name]["cure_curse"]:
+        user.object_data["status_effects"].remove("curse")
+        is_removed_status_effect = True
+    
+    if "seal" in user.object_data["status_effects"] and skill_data[skill_name]["cure_seal"]:
+        user.object_data["status_effects"].remove("seal")
+        is_removed_status_effect = True
+
+    if "paralyze" in user.object_data["status_effects"] and skill_data[skill_name]["cure_paralyze"]:
+        user.object_data["status_effects"].remove("paralyze")
+        is_removed_status_effect = True
+
+    if "starving" in user.object_data["status_effects"] and skill_data[skill_name]["cure_starving"]:
+        user.object_data["status_effects"].remove("starving")
+        is_removed_status_effect = True
+
+    return is_removed_status_effect
+
+# The infliction of status effects on either player or enemy.
+def inflict_target_status(target:MazeObject, skill_data, skill_name):
+    if skill_data[skill_name]["poison_possiblity"] > uniform(0, 1.0):
+        if not "poison" in target.object_data["status_effects"]:
+            target.object_data["status_effects"].append("poison")
+        target.object_data["poison_count"] = 100
+
+    if skill_data[skill_name]["curse_possiblity"] > uniform(0, 1.0):
+        if not "curse" in target.object_data["status_effects"]:
+            target.object_data["status_effects"].append("curse")
+        target.object_data["curse_count"] = 100
+    
+    if skill_data[skill_name]["seal_possiblity"] > uniform(0, 1.0):
+        if not "seal" in target.object_data["status_effects"]:
+            target.object_data["status_effects"].append("seal")
+        target.object_data["seal_count"] = 100
+    
+    if skill_data[skill_name]["paralyze_possiblity"] > uniform(0, 1.0):
+        if not "paralyze" in target.object_data["status_effects"]:
+            target.object_data["status_effects"].append("paralyze")
+        target.object_data["paralyze_count"] = 100
+
+    if skill_data[skill_name]["starving_possiblity"] > uniform(0, 1.0):
+        if not "starving" in target.object_data["status_effects"]:
+            target.object_data["status_effects"].append("poistarvingson")
+        target.object_data["starving_count"] = 100
+
+def use_skill(skill_user, skill_data, target = None, is_in_menu = True):
     
     # TODO: Do not use item when a current value is the same as a maximum value
     skill_name = list(skill_data.keys())[0]
@@ -133,10 +183,10 @@ def use_skill(skill_user, skill_data, target_object = None, is_in_menu = True):
         print("This skill cannot be used in the player's menu.")
         getch()
         return False
-    
-    # TODO: Add status effects on the player.
+
     # Heal or alter player's status.
     # When enemy us`ing the skill, whether skill is used in main menu must be considered
+    # Status change is applied to
     elif not skill_data[skill_name]["is_in_fight"]:
         if not is_in_menu or (skill_user.object_data["current_hp"] - skill_data[skill_name]["hp_spent"] >= 0 
         or skill_data[skill_name]["hp_spent"] == 0)\
@@ -154,8 +204,8 @@ def use_skill(skill_user, skill_data, target_object = None, is_in_menu = True):
             or (skill_user.object_data["current_sp"] != skill_user.object_data["current_max_sp"] 
             and skill_data[skill_name]["sp_change"] != 0)\
             or (skill_user.object_data["current_ep"] != skill_user.object_data["current_max_ep"] 
-            and skill_data[skill_name]["ep_change"] != 0):
-
+            and skill_data[skill_name]["ep_change"] != 0)\
+            or remove_status_effects(skill_user, skill_data, skill_name):
 
                 hp_change = _use_skill_sub(skill_user, skill_data, skill_data[skill_name]["hp_change"])
                 skill_user.object_data["current_hp"] = min(skill_user.object_data["current_hp"] + 
@@ -183,7 +233,7 @@ def use_skill(skill_user, skill_data, target_object = None, is_in_menu = True):
     # Player can be the person who receive the damage from enemy.
     # TODO: Add the status effects on the enemy.
     # If player is in fight, then it will perform the attack against enemy.
-    elif skill_data[skill_name]["is_in_fight"] and target_object != None:
+    elif skill_data[skill_name]["is_in_fight"] and target != None:
         if not is_in_menu or (skill_user.object_data["current_hp"] - skill_data[skill_name]["hp_spent"] >= 0 
         or skill_data[skill_name]["hp_spent"] == 0)\
         and (skill_user.object_data["current_mp"] - skill_data[skill_name]["mp_spent"] >= 0 
@@ -194,32 +244,40 @@ def use_skill(skill_user, skill_data, target_object = None, is_in_menu = True):
         or skill_data[skill_name]["ep_spent"] == 0):
             
             hp_change = _use_skill_sub(skill_user, skill_data, skill_data[skill_name]["hp_change"])
-            target_object.object_data["current_hp"] = min(target_object.object_data["current_hp"] + 
+            target.object_data["current_hp"] = min(target.object_data["current_hp"] + 
             hp_change,
-            target_object.object_data["current_max_hp"])
+            target.object_data["current_max_hp"])
 
             mp_change = _use_skill_sub(skill_user, skill_data, skill_data[skill_name]["mp_change"])
-            target_object.object_data["current_mp"] = min(target_object.object_data["current_mp"] + 
+            target.object_data["current_mp"] = min(target.object_data["current_mp"] + 
             mp_change,
-            target_object.object_data["current_max_mp"])
+            target.object_data["current_max_mp"])
             
             sp_change = _use_skill_sub(skill_user, skill_data, skill_data[skill_name]["sp_change"])
-            target_object.object_data["current_sp"] = min(target_object.object_data["current_sp"] + 
+            target.object_data["current_sp"] = min(target.object_data["current_sp"] + 
             sp_change,
-            target_object.object_data["current_max_sp"])
+            target.object_data["current_max_sp"])
 
             ep_change = _use_skill_sub(skill_user, skill_data, skill_data[skill_name]["ep_change"])
-            target_object.object_data["current_ep"] = min(target_object.object_data["current_ep"] + 
+            target.object_data["current_ep"] = min(target.object_data["current_ep"] + 
             ep_change,
-            target_object.object_data["current_max_ep"])
+            target.object_data["current_max_ep"])
             
             skill_user.object_data["current_hp"]  -= skill_data[skill_name]["hp_spent"]
             skill_user.object_data["current_mp"]  -= skill_data[skill_name]["mp_spent"]
             skill_user.object_data["current_sp"]  -= skill_data[skill_name]["sp_spent"]
             skill_user.object_data["current_ep"]  -= skill_data[skill_name]["ep_spent"] 
-                
+            
+            # Remove status effects from users.
+            remove_status_effects(skill_user, skill_data, skill_name)
+            
+            # Inflict status effects on player or enemy.
+            inflict_target_status(target, skill_data,skill_name)
+
+            # Inflict the status effect on user.
             return hp_change, mp_change, sp_change, ep_change, False
 
+    
 
 # Return the value in accordance with the changes of the values.
 # TODO: Add the multiplier to the skills.
@@ -234,7 +292,7 @@ def _use_skill_sub(player,skill_data,changed_value):
 
 # NOTE: This function is firstly invoked before the status is updated everytime the player walk
 # on the field. This function puts the status effects on characters or creatures on Maze.
-def affects_status_on_player(maze_object: MazeObject):
+def affects_player_status(maze_object: MazeObject):
     
     # Firstly, put all status normal before getting into the status effects.
     maze_object.object_data["current_strength"] = maze_object.object_data["strength"]

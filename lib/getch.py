@@ -26,7 +26,6 @@ class _GetchUnix:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
 
-
 class _GetchWindows:
     def __init__(self):
         import msvcrt

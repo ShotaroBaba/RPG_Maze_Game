@@ -24,7 +24,7 @@
         "poison_possiblity": 0,
         "curse_possibility": 0,
         "seal_possibility": 0,
-        "paralyzed_possibility": 0,
+        "paralyze_possibility": 0,
         "starving_possibility": 0,
         "strength_multiplier": 0.0,
         "agility_multiplier": 0.0,
@@ -38,8 +38,8 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
-        "cure_starving": false,
-        "cure_all_status": false
+        "cure_paralyze": false,
+        "cure_starving": false
     },
     "Fire": {
         "attribute": "fire",
@@ -66,7 +66,7 @@
         "poison_possiblity": 0,
         "curse_possibility": 0,
         "seal_possibility": 0,
-        "paralyzed_possibility": 0,
+        "paralyze_possibility": 0,
         "starving_possibility": 0,
         "strength_multiplier": 0.0,
         "agility_multiplier": 0.0,
@@ -80,8 +80,8 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
-        "cure_starving": false,
-        "cure_all_status": false
+        "cure_paralyze": false,
+        "cure_starving": false
     },
     "Thunder": {
         "attribute": "thunder",
@@ -108,7 +108,7 @@
         "poison_possiblity": 0,
         "curse_possibility": 0,
         "seal_possibility": 0,
-        "paralyzed_possibility": 0,
+        "paralyze_possibility": 0,
         "starving_possibility": 0,
         "strength_multiplier": 0.0,
         "agility_multiplier": 0.0,
@@ -122,8 +122,8 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
-        "cure_starving": false,
-        "cure_all_status": false
+        "cure_paralyze": false,
+        "cure_starving": false
     },
     "Water": {
         "attribute": "water",
@@ -150,7 +150,7 @@
         "poison_possiblity": 0,
         "curse_possibility": 0,
         "seal_possibility": 0,
-        "paralyzed_possibility": 0,
+        "paralyze_possibility": 0,
         "starving_possibility": 0,
         "strength_multiplier": 0.0,
         "agility_multiplier": 0.0,
@@ -164,8 +164,8 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
-        "cure_starving": false,
-        "cure_all_status": false
+        "cure_paralyze": false,
+        "cure_starving": false
     },
     "Dummy_1": {
         "attribute": "water",
@@ -192,7 +192,7 @@
         "poison_possiblity": 0,
         "curse_possibility": 0,
         "seal_possibility": 0,
-        "paralyzed_possibility": 0,
+        "paralyze_possibility": 0,
         "starving_possibility": 0,
         "strength_multiplier": 0.0,
         "agility_multiplier": 0.0,
@@ -206,8 +206,8 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
-        "cure_starving": false,
-        "cure_all_status": false
+        "cure_paralyze": false,
+        "cure_starving": false
     },
     "Dummy_2": {
         "attribute": "water",
@@ -234,7 +234,7 @@
         "poison_possiblity": 0,
         "curse_possibility": 0,
         "seal_possibility": 0,
-        "paralyzed_possibility": 0,
+        "paralyze_possibility": 0,
         "starving_possibility": 0,
         "strength_multiplier": 0.0,
         "agility_multiplier": 0.0,
@@ -248,7 +248,7 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
-        "cure_starving": false,
-        "cure_all_status": false
+        "cure_paralyze": false,
+        "cure_starving": false
     }
 }

@@ -28,8 +28,13 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
+        "cure_paralyze": false,
         "cure_starving": false,
-        "cure_all_status": false
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     },
     "Bread": {
         "is_item": true,
@@ -60,8 +65,13 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
+        "cure_paralyze": false,
         "cure_starving": false,
-        "cure_all_status": false
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     },
     "Bronze armor": {
         "is_item": false,
@@ -92,8 +102,13 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
+        "cure_paralyze": false,
         "cure_starving": false,
-        "cure_all_status": false
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     },
     "Bronze arm": {
         "is_item": false,
@@ -124,8 +139,13 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
+        "cure_paralyze": false,
         "cure_starving": false,
-        "cure_all_status": false
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     },
     "Bronze leggings": {
         "is_item": false,
@@ -156,8 +176,13 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
+        "cure_paralyze": false,
         "cure_starving": false,
-        "cure_all_status": false
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     },
     "Bronze head": {
         "is_item": false,
@@ -188,8 +213,13 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
+        "cure_paralyze": false,
         "cure_starving": false,
-        "cure_all_status": false
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     },
     "Bronze wrist": {
         "is_item": false,
@@ -220,8 +250,13 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
+        "cure_paralyze": false,
         "cure_starving": false,
-        "cure_all_status": false
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     },
     "Bronze ring": {
         "is_item": false,
@@ -252,8 +287,13 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
+        "cure_paralyze": false,
         "cure_starving": false,
-        "cure_all_status": false
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     },
     "Bronze skill book": {
         "is_item": false,
@@ -284,8 +324,13 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
+        "cure_paralyze": false,
         "cure_starving": false,
-        "cure_all_status": false
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     },
     "Tonic": {
         "is_item": true,
@@ -316,8 +361,13 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
+        "cure_paralyze": false,
         "cure_starving": false,
-        "cure_all_status": false
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     },
     "Bronze sword": {
         "is_item": false,
@@ -348,8 +398,13 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
+        "cure_paralyze": false,
         "cure_starving": false,
-        "cure_all_status": false
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     },
     "Antidote": {
         "is_item": true,
@@ -380,8 +435,13 @@
         "cure_poison": true,
         "cure_curse": false,
         "cure_seal": false,
+        "cure_paralyze": false,
         "cure_starving": false,
-        "cure_all_status": false
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     },
     "Uncurse Seal": {
         "is_item": true,
@@ -412,8 +472,13 @@
         "cure_poison": false,
         "cure_curse": true,
         "cure_seal": false,
+        "cure_paralyze": false,
         "cure_starving": false,
-        "cure_all_status": false
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     },
     "memories grass": {
         "is_item": true,
@@ -444,8 +509,13 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": true,
+        "cure_paralyze": false,
         "cure_starving": false,
-        "cure_all_status": false
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     },
     "purgative medicine": {
         "is_item": true,
@@ -476,10 +546,52 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
+        "cure_paralyze": false,
         "cure_starving": true,
-        "cure_all_status": false
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     },
     "Panacea": {
+        "is_item": true,
+        "is_weapon": false,
+        "is_body_armor": false,
+        "is_arm": false,
+        "is_leg": false,
+        "is_head": false,
+        "is_wrist": false,
+        "is_ring": false,
+        "is_skill_book": false,
+        "hp_change": 0,
+        "mp_change": 0,
+        "sp_change": 0,
+        "ep_change": 0,
+        "strength_change": 0,
+        "agility_change": 0,
+        "vitality_change": 0,
+        "dexterity_change": 0,
+        "smartness_change": 0,
+        "magic_power_change": 0,
+        "mental_strength_change": 0,
+        "luckiness_change": 0,
+        "effective_time": 0,
+        "durablity_change": 0,
+        "weight": 0,
+        "level": 0,
+        "cure_poison": true,
+        "cure_curse": true,
+        "cure_seal": true,
+        "cure_paralyze": true,
+        "cure_starving": true,
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
+    },
+    "MOV grass": {
         "is_item": true,
         "is_weapon": false,
         "is_body_armor": false,
@@ -508,7 +620,12 @@
         "cure_poison": false,
         "cure_curse": false,
         "cure_seal": false,
+        "cure_paralyze": true,
         "cure_starving": false,
-        "cure_all_status": true
+        "poison_resistance": 0.0,
+        "curse_resistance": 0.0,
+        "seal_resistance": 0.0,
+        "paralyze_resistance": 0.0,
+        "starving_resistance": 0.0
     }
 }

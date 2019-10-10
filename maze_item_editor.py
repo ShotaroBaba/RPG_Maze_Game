@@ -42,10 +42,10 @@ class Application(object):
         ("is_skill_book","is_skill_book")]
         
         # Item that cure negative status effects.
-        self.list_of_parameters_right_2_2 = ["cure_poison", "cure_curse", "cure_seal", "cure_starving", "cure_all_status"]
+        self.list_of_parameters_right_2_2 = ["cure_poison", "cure_curse", "cure_seal", "cure_paralyze", "cure_starving"]
         
         # Item that will prevents the status effects.
-        self.list_of_parameters_right_2_3 = ["poison_resistance", "curse_resistance", "seal_resistance", "starving_resistance"]
+        self.list_of_parameters_right_2_3 = ["poison_resistance", "curse_resistance", "seal_resistance", "paralyze_resistance", "starving_resistance"]
 
         self.list_of_parameters_left = ["magic_power_change","mental_strength_change", "luckiness_change", "effective_time", "durablity_change", "weight", "level"]
         self.start_window()
@@ -117,9 +117,9 @@ class Application(object):
         self.main_group_right_2_3.pack()
 
         for i,parameter_list in enumerate(self.list_of_parameters_right_2_3):
-            exec("""self.{0}_adjust_label = tk.Label(self.main_group_right_2_1, text = "{0}: " )""". format(parameter_list))
+            exec("""self.{0}_adjust_label = tk.Label(self.main_group_right_2_3, text = "{0}: " )""". format(parameter_list))
             exec("self.{0}_adjust_label.grid(row = i, sticky = tk.NE,column = 0, padx = 3, pady =1)". format(parameter_list))
-            exec("self.{0}_input_box = tk.Entry(self.main_group_right_2_1)". format(parameter_list))
+            exec("self.{0}_input_box = tk.Entry(self.main_group_right_2_3)". format(parameter_list))
             exec("self.{0}_input_box.grid(row = i, column = 1, padx = 10, pady =1, sticky = tk.N)". format(parameter_list))
 
         # Listbox Frame
@@ -254,6 +254,13 @@ class Application(object):
                 exec("self.{0}_value.set(self.item_list[value][i])".format(i))
             except:
                 exec("self.{0}_value.set(False)".format(i))
+        
+        for parameter_list in self.list_of_parameters_right_2_3:
+            exec("self.{0}_input_box.delete(0,tk.END)".format(parameter_list))
+            try:
+                exec("self.{0}_input_box.insert(0,{1})".format(parameter_list,self.item_list[value][parameter_list]))
+            except:
+                exec("self.{0}_input_box.insert(0,{1})".format(parameter_list,0))
 
 # Start the application
 def main():
