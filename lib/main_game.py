@@ -78,8 +78,8 @@ non_selected_parameters = ["current_exp","next_exp","level","current_hp",
                                    "current_mp", "current_sp", "current_ep"]
         
 body_parts_list = ["hand","head", "arm","leg","body_armor","right_wrist","left_wrist","right_finger","left_finger"]
-# The map for players to walk at the beginning
 
+# The map for players to walk at the beginning
 # Randomly select the items from the list based on the item's list and level....
 def random_item_selection(level = 1):
     return choice(list(item_json.keys()))
@@ -430,8 +430,7 @@ class MainGame(object):
                 
                 # Escape from the enemy.
                 # The rate of the escape depends on the values of
-                # the success.
-                # TODO: Enable player to use item.
+                # the agility.
                 elif cursor_selection == 2:            
                     print("This feature will be implemented later...")
                     getch()
@@ -497,28 +496,6 @@ class MainGame(object):
                 # Reveal a part of maps around player at a certain amount.
                     self.hidden_map_grid[i][j] = self.map_grid[i][j]
 
-    def _move_player_sub(self,str_direction, next_player_pos):
-        # Initialize map using originally created random map.
-        self.map_grid = deepcopy(self.original_map_grid)
-
-        # Place player on the map based on the move player made.
-        self.map_grid[next_player_pos[0]][next_player_pos[1]] = self.player.object_data["displayed_character"]
-
-        # Update player position.
-        self.player.object_data["object_pos"] = next_player_pos
-        
-        self.player.object_data["current_ep"] = max(self.player.object_data["current_ep"] - 1, 0)
-
-
-        # if the current ep is zero. the current hp will decreases.
-        if self.player.object_data["current_ep"] == 0:
-            self.player.object_data["current_hp"] = max(self.player.object_data["current_hp"] - 1, 1)
-
-        # Update player's abilities every time the player make movement.
-        self.player.update_object()
-
-        # This methods is used only when player moves.
-        self.player.move_update_object()
 
     # Allows the users to select whether they will proceed to the next floor...
     def _map_proceed_selection(self):
@@ -1128,6 +1105,29 @@ class MainGame(object):
         self.original_map_grid = json_data["map_grid"]
         self.hidden_map_grid = json_data["hidden_map_grid"]
         self.level = json_data["map_level"]
+
+    def _move_player_sub(self,str_direction, next_player_pos):
+        
+        
+        # Initialize map using originally created random map.
+        self.map_grid = deepcopy(self.original_map_grid)
+
+        # Place player on the map based on the move player made.
+        self.map_grid[next_player_pos[0]][next_player_pos[1]] = self.player.object_data["displayed_character"]
+
+        # Update player position.
+        self.player.object_data["object_pos"] = next_player_pos
+        self.player.object_data["current_ep"] = max(self.player.object_data["current_ep"] - 1, 0)
+
+        # if the current ep is zero. the current hp will decreases.
+        if self.player.object_data["current_ep"] == 0:
+            self.player.object_data["current_hp"] = max(self.player.object_data["current_hp"] - 1, 1)
+
+        # Update player's abilities every time the player make movement.
+        self.player.update_object()
+
+        # This methods is used only when player moves.
+        self.player.move_update_object()
 
     # It is called every time the cursor is moved.
     def _move_player(self,str_direction):
