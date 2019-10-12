@@ -64,12 +64,15 @@ non_numerical_player_strength = ["strength", "agility", "vitality", "dexterity",
 
 string_numerical_player_strength = ["player_name", "is_living", "is_player", 
                                     "is_enemy", "head", "arm", "leg", "body_armor","right_wrist", "left_wrist", 
-                                    "right_finger", "left_finger", "status", "displayed_character",
+                                    "right_finger", "left_finger", "status_effects", "displayed_character",
                                     "max_item_hold", "exp", "current_exp", "bonus_point", "next_exp", "items",
                                     "skills", "rank", "drop_item"]
 
 non_numerical_current_player_strength =   ["current_strength", "current_agility", "current_vitality", "current_dexterity",
                                            "current_smartness", "current_magic_power", "current_mental_strength", "current_luckiness"]
+
+# The time for recording the status counts.
+status_counters = ["poison_count", "paralyze_count", "curse_count","seal_count", "starving_count"]
 
 current_maximum_player_strength = ["current_max_hp", "current_max_mp", "current_max_sp", "current_max_ep"]
 
@@ -451,6 +454,11 @@ class MainGame(object):
                     else:
                         print("Cannot escape!")
                         _enemy_turn_normal_attack()
+            
+            # Consider status effects after the fight.
+            self.player.update_status_effect_in_fight()
+            enemy.update_status_effect_in_fight()
+            
             clear()
         clear()
         
@@ -1077,7 +1085,7 @@ class MainGame(object):
             open(saved_json_file_path, 'a').close()
 
         for attribute in numerical_player_strengh + current_status_player + non_numerical_player_strength + \
-            string_numerical_player_strength:
+            string_numerical_player_strength + status_counters:
             saved_data_dic[attribute] = self.player.object_data[attribute]
         
         # Save map information and player location.
@@ -1122,6 +1130,9 @@ class MainGame(object):
         # if the current ep is zero. the current hp will decreases.
         if self.player.object_data["current_ep"] == 0:
             self.player.object_data["current_hp"] = max(self.player.object_data["current_hp"] - 1, 1)
+
+        # Before updating object, the status effects is considered.
+        self.player.update_status_effect_in_map()
 
         # Update player's abilities every time the player make movement.
         self.player.update_object()

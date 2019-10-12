@@ -5,11 +5,16 @@ from random import uniform
 from functools import reduce
 from getch import _Getch
 from maze_object import MazeObject
-starving_ep_reduction_rate = 4
+
+
 poison_hp_reduction_rate = 200
 getch = _Getch()
+
+starving_ep_reduction_rate = 4
 status_effect_decay_rate_in_map = 1
 status_effect_decay_rate_in_fight = 10
+
+
 
 # class Item(object):
 #     def __init__(self, item_name,json_data = {}, level = 1):
@@ -124,37 +129,37 @@ def use_item(player: MazeObject,item_name,item_data):
 
     return hp_changed or mp_changed or sp_changed or ep_changed
 
-def remove_status_effects(user:MazeObject, skill_data, skill_name):
+def remove_status_effects(user:MazeObject, data, name):
 
     is_removed_status_effect = False
     cured_list = []
 
-    if "poison" in user.object_data["status_effects"] and skill_data[skill_name]["cure_poison"]:
+    if "poison" in user.object_data["status_effects"] and data[name]["cure_poison"]:
         user.object_data["status_effects"].remove("poison")
         is_removed_status_effect = True
         cured_list.append("poison")
         user.object_data["poison_count"] = 0
 
 
-    if "curse" in user.object_data["status_effects"] and skill_data[skill_name]["cure_curse"]:
+    if "curse" in user.object_data["status_effects"] and data[name]["cure_curse"]:
         user.object_data["status_effects"].remove("curse")
         is_removed_status_effect = True
         cured_list.append("curse")
         user.object_data["curse_count"] = 0
 
-    if "seal" in user.object_data["status_effects"] and skill_data[skill_name]["cure_seal"]:
+    if "seal" in user.object_data["status_effects"] and data[name]["cure_seal"]:
         user.object_data["status_effects"].remove("seal")
         is_removed_status_effect = True
         cured_list.append("seal")
         user.object_data["seal_count"] = 0
 
-    if "paralyze" in user.object_data["status_effects"] and skill_data[skill_name]["cure_paralyze"]:
+    if "paralyze" in user.object_data["status_effects"] and data[name]["cure_paralyze"]:
         user.object_data["status_effects"].remove("paralyze")
         is_removed_status_effect = True
         cured_list.append("paralyze")
         user.object_data["paralyze_count"] = 0
 
-    if "starving" in user.object_data["status_effects"] and skill_data[skill_name]["cure_starving"]:
+    if "starving" in user.object_data["status_effects"] and data[name]["cure_starving"]:
         user.object_data["status_effects"].remove("starving")
         is_removed_status_effect = True
         cured_list.append("starving")
@@ -215,6 +220,8 @@ def use_skill(skill_user, skill_data, target = None, is_in_menu = True):
         and (skill_user.object_data["current_ep"] - skill_data[skill_name]["ep_spent"] >= 0 
         or skill_data[skill_name]["ep_spent"] == 0):
 
+            is_status_removed, removed_list = remove_status_effects(skill_user, skill_data, skill_name)
+
             if not is_in_menu or (skill_user.object_data["current_hp"] != skill_user.object_data["current_max_hp"] 
             and skill_data[skill_name]["hp_change"] != 0)\
             or (skill_user.object_data["current_mp"] != skill_user.object_data["current_max_mp"] 
@@ -223,7 +230,7 @@ def use_skill(skill_user, skill_data, target = None, is_in_menu = True):
             and skill_data[skill_name]["sp_change"] != 0)\
             or (skill_user.object_data["current_ep"] != skill_user.object_data["current_max_ep"] 
             and skill_data[skill_name]["ep_change"] != 0)\
-            or remove_status_effects(skill_user, skill_data, skill_name):
+            or is_status_removed:
 
                 hp_change = _use_skill_sub(skill_user, skill_data, skill_data[skill_name]["hp_change"])
                 skill_user.object_data["current_hp"] = min(skill_user.object_data["current_hp"] + 
@@ -245,7 +252,9 @@ def use_skill(skill_user, skill_data, target = None, is_in_menu = True):
                 ep_change,
                 skill_user.object_data["current_max_ep"])
 
-            
+                if removed_list != []:
+                    print("Cured {0}!".format(", ".join(removed_list)))
+
                 return hp_change, mp_change, sp_change, ep_change, True
     
     # Player can be the person who receive the damage from enemy.
@@ -301,125 +310,10 @@ def use_skill(skill_user, skill_data, target = None, is_in_menu = True):
 # TODO: Add the multiplier to the skills.
 def _use_skill_sub(player,skill_data,changed_value):
 
-    tmp = changed_value
+    # Initialise the values
+    tmp = 0
     tmp_name = list(skill_data.keys())[0]
     for i in strength_parameters:
-        tmp += changed_value * (uniform(1.0, 1.5) * (player.object_data["current_" + i] * skill_data[tmp_name][i + "_multiplier"]))
+        tmp += changed_value * (uniform(0.8, 1.0) * (player.object_data["current_" + i] * skill_data[tmp_name][i + "_multiplier"]))
     
     return int(round(tmp,0))
-
-# NOTE: This function is firstly invoked before the status is updated everytime the player walk
-# on the field. This function puts the status effects on characters or creatures on Maze.
-def affect_player_status(maze_object: MazeObject):
-    
-    # Firstly, put all status normal before getting into the status effects.
-    maze_object.object_data["current_strength"] = maze_object.object_data["strength"]
-    maze_object.object_data["current_vitality"] = maze_object.object_data["vitality"]
-    maze_object.object_data["current_dexterity"] = maze_object.object_data["dexterity"]
-    maze_object.object_data["current_agility"] = maze_object.object_data["agility"]
-    maze_object.object_data["current_smartness"] = maze_object.object_data["smartness"]
-    maze_object.object_data["current_magic_power"] = maze_object.object_data["magic_power"]
-    maze_object.object_data["current_mental_strength"] = maze_object.object_data["mental_strength"]
-    maze_object.object_data["current_luckiness"] = maze_object.object_data["luckiness"]
-    maze_object.object_data["unable_to_use_skill"] = False
-    maze_object.object_data["cannot_act"] = False
-
-    # This effects is effective until its development is over,
-    # The status effects can be multiple.
-    
-    # Object hp decrases gradually
-    if "poison" in maze_object.object_data["status_effects"]:
-        # HP becomes zero
-        maze_object.object_data["current_hp"] = min(1, maze_object.object_data["current_hp"]\
-            - ( maze_object.object_data["hp"] // poison_hp_reduction_rate))
-    
-    # All object's status becomes half.
-    if "curse" in maze_object.object_data["status_effects"]:
-        maze_object.object_data["current_strength"] = maze_object.object_data["strength"] // 2
-        maze_object.object_data["current_vitality"] = maze_object.object_data["vitality"] // 2
-        maze_object.object_data["current_dexterity"] = maze_object.object_data["dexterity"] // 2
-        maze_object.object_data["current_agility"] = maze_object.object_data["agility"] // 2
-
-        maze_object.object_data["current_smartness"] = maze_object.object_data["smartness"] // 2
-        maze_object.object_data["current_magic_power"] = maze_object.object_data["magic_power"] // 2
-        maze_object.object_data["current_mental_strength"] = maze_object.object_data["mental_strength"] // 2
-        maze_object.object_data["current_luckiness"] = maze_object.object_data["luckiness"] // 2
-    
-    # Objects are unable to use their skills.
-    if "seal" in maze_object.object_data["status_effects"]:
-        maze_object.object_data["unable_to_use_skill"] = True
-
-    # Object cannot move and act for a certain amount of time.
-    if "paralyzed" in maze_object.object_data["status_effects"]:
-        maze_object.object_data["cannot_act"] = True 
-
-    # The reduction of EP becomes more faster.
-    if "starving" in maze_object.object_data["status_effects"]:
-        maze_object.object_data["current_ep"] -= min(0, maze_object.object_data["current_ep"] - starving_ep_reduction_rate)
-
-def update_status_effect_in_map(maze_object: MazeObject):
-    maze_object.object_data["poison_count"] -= min(0, status_effect_decay_rate_in_map)
-    maze_object.object_data["paralyze_count"] -= min(0, status_effect_decay_rate_in_map)
-    maze_object.object_data["curse_count"] -= min(0, status_effect_decay_rate_in_map)
-    maze_object.object_data["seal_count"] -= min(0, status_effect_decay_rate_in_map)
-    maze_object.object_data["starving_count"] -= min(0, status_effect_decay_rate_in_map)
-
-    # Object hp decrases gradually
-    if "poison" in maze_object.object_data["status_effects"] and  maze_object.object_data["poison_count"] == 0:
-        maze_object.object_data.remove("poison")
-
-     # Object hp decrases gradually
-    if "poison" in maze_object.object_data["status_effects"] and  maze_object.object_data["paralyze_count"] == 0:
-        maze_object.object_data.remove("paralyze")
-    
-     # Object hp decrases gradually
-    if "poison" in maze_object.object_data["status_effects"] and  maze_object.object_data["curse_count"] == 0:
-        maze_object.object_data.remove("curse")
-
-     # Object hp decrases gradually
-    if "poison" in maze_object.object_data["status_effects"] and  maze_object.object_data["seal_count"] == 0:
-        maze_object.object_data.remove("seal")
-
-     # Object hp decrases gradually
-    if "poison" in maze_object.object_data["status_effects"] and  maze_object.object_data["starving_count"] == 0:
-        maze_object.object_data.remove("starving")
-
-    affect_player_status(maze_object)
-
-def update_status_effect_in_fight(maze_object: MazeObject):
-    maze_object.object_data["poison_count"] = min(0, 
-    maze_object.object_data["poison_count"] - status_effect_decay_rate_in_fight)
-    
-    maze_object.object_data["paralyze_count"] = min(0,
-    maze_object.object_data["paralyze_count"] - status_effect_decay_rate_in_fight)
-    
-    maze_object.object_data["curse_count"] = min(0, 
-    maze_object.object_data["curse_count"] - status_effect_decay_rate_in_fight)
-
-    maze_object.object_data["seal_count"] = min(0, 
-    maze_object.object_data["seal_count"] - status_effect_decay_rate_in_fight)
-
-    maze_object.object_data["starving_count"] = min(0, 
-    maze_object.object_data["starving_count"] - status_effect_decay_rate_in_fight)
-
-    # Object hp decrases gradually
-    if "poison" in maze_object.object_data["status_effects"] and  maze_object.object_data["poison_count"] == 0:
-        maze_object.object_data.remove("poison")
-
-     # Object hp decrases gradually
-    if "poison" in maze_object.object_data["status_effects"] and  maze_object.object_data["paralyze_count"] == 0:
-        maze_object.object_data.remove("paralyze")
-    
-     # Object hp decrases gradually
-    if "poison" in maze_object.object_data["status_effects"] and  maze_object.object_data["curse_count"] == 0:
-        maze_object.object_data.remove("curse")
-
-     # Object hp decrases gradually
-    if "poison" in maze_object.object_data["status_effects"] and  maze_object.object_data["seal_count"] == 0:
-        maze_object.object_data.remove("seal")
-
-     # Object hp decrases gradually
-    if "poison" in maze_object.object_data["status_effects"] and  maze_object.object_data["starving_count"] == 0:
-        maze_object.object_data.remove("starving")
-
-    affect_player_status(maze_object)

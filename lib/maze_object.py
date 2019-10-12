@@ -11,6 +11,11 @@ non_numerical_current_player_strength =   ["current_strength", "current_agility"
 
 equipment_body_part_list  = ["head", "arm", "leg", "body_armor", "right_wrist", "left_wrist", "right_finger", "left_finger"]
 
+poison_hp_reduction_rate = 0.005
+starving_ep_reduction_rate = 4
+status_effect_decay_rate_in_map = 1
+status_effect_decay_rate_in_fight = 10
+
 # Used for returning a certain value for a certain situation.
 # The enemy strength is decided randomly.
 def return_json_value_data(key_value, default_value, json_data, level  = 1, is_random = "no"):
@@ -149,8 +154,8 @@ class MazeObject(object):
 
         # Status is normal by default
         # if the status is normal, then the player is not affected.
-        self.object_data["status"]  = json_data["status"]\
-            if json_data != {} and "status" in json_data.keys() else []
+        self.object_data["status_effects"]  = json_data["status_effects"]\
+            if json_data != {} and "status_effects" in json_data.keys() else []
 
         # By default, the Objects's position is unknown.
         # It is only applied to the player.
@@ -254,7 +259,6 @@ class MazeObject(object):
 
             self.object_data["weight"] +=  self.object_data["items"][i][item_name]["weight"]
 
-    
     def move_update_object(self):
         # If exceed the limit, the hp continues to decrease until the weight losses into a certain amount.
         self.object_data["current_hp"] -= max(self.object_data["weight"] - self.object_data["weight_limit"], 0)
@@ -293,3 +297,128 @@ class MazeObject(object):
             self.object_data["next_exp"] = 50 + int(round(50 * (0.5 * (self.object_data["level"] ** (constant_next_level_exp))))) - remain
 
             self.update_object()
+
+    # NOTE: This function is firstly invoked before the status is updated everytime the player walk
+    # on the field. This function puts the status effects on characters or creatures on Maze.
+    def affect_player_status(self):
+        
+        # Firstly, put all status normal before getting into the status effects.
+        self.object_data["current_strength"] = self.object_data["strength"]
+        self.object_data["current_vitality"] = self.object_data["vitality"]
+        self.object_data["current_dexterity"] = self.object_data["dexterity"]
+        self.object_data["current_agility"] = self.object_data["agility"]
+        self.object_data["current_smartness"] = self.object_data["smartness"]
+        self.object_data["current_magic_power"] = self.object_data["magic_power"]
+        self.object_data["current_mental_strength"] = self.object_data["mental_strength"]
+        self.object_data["current_luckiness"] = self.object_data["luckiness"]
+        self.object_data["unable_to_use_skill"] = False
+        self.object_data["cannot_act"] = False
+
+        # This effects is effective until its development is over,
+        # The status effects can be multiple.
+        
+        # Object hp decrases gradually
+        if "poison" in self.object_data["status_effects"]:
+            # HP becomes zero
+            self.object_data["current_hp"] -= min(1, 
+                self.object_data["current_hp"] * poison_hp_reduction_rate)
+        
+        # All object's status becomes half.
+        if "curse" in self.object_data["status_effects"]:
+            self.object_data["current_strength"] = self.object_data["strength"] // 2
+            self.object_data["current_vitality"] = self.object_data["vitality"] // 2
+            self.object_data["current_dexterity"] = self.object_data["dexterity"] // 2
+            self.object_data["current_agility"] = self.object_data["agility"] // 2
+
+            self.object_data["current_smartness"] = self.object_data["smartness"] // 2
+            self.object_data["current_magic_power"] = self.object_data["magic_power"] // 2
+            self.object_data["current_mental_strength"] = self.object_data["mental_strength"] // 2
+            self.object_data["current_luckiness"] = self.object_data["luckiness"] // 2
+        
+        # Objects are unable to use their skills.
+        if "seal" in self.object_data["status_effects"]:
+            self.object_data["unable_to_use_skill"] = True
+
+        # Object cannot move and act for a certain amount of time.
+        if "paralyzed" in self.object_data["status_effects"]:
+            self.object_data["cannot_act"] = True 
+
+        # The reduction of EP becomes more faster.
+        if "starving" in self.object_data["status_effects"]:
+            self.object_data["current_ep"] -= min(0, self.object_data["current_ep"] - starving_ep_reduction_rate)
+
+    def update_status_effect_in_map(self):
+        self.object_data["poison_count"] = max(0, 
+        self.object_data["poison_count"] - status_effect_decay_rate_in_map)
+        
+        self.object_data["paralyze_count"] = max(0,
+        self.object_data["paralyze_count"] - status_effect_decay_rate_in_map)
+        
+        self.object_data["curse_count"] = max(0, 
+        self.object_data["curse_count"] - status_effect_decay_rate_in_map)
+
+        self.object_data["seal_count"] = max(0, 
+        self.object_data["seal_count"] - status_effect_decay_rate_in_map)
+
+        self.object_data["starving_count"] = max(0, 
+        self.object_data["starving_count"] - status_effect_decay_rate_in_map)
+
+        # Object hp decrases gradually
+        if "poison" in self.object_data["status_effects"] and  self.object_data["poison_count"] == 0:
+            self.object_data["status_effects"].remove("poison")
+
+        # Object hp decrases gradually
+        if "paralyze" in self.object_data["status_effects"] and  self.object_data["paralyze_count"] == 0:
+            self.object_data["status_effects"].remove("paralyze")
+        
+        # Object hp decrases gradually
+        if "curse" in self.object_data["status_effects"] and  self.object_data["curse_count"] == 0:
+            self.object_data["status_effects"].remove("curse")
+
+        # Object hp decrases gradually
+        if "seal" in self.object_data["status_effects"] and  self.object_data["seal_count"] == 0:
+            self.object_data["status_effects"].remove("seal")
+
+        # Object hp decrases gradually
+        if "starving" in self.object_data["status_effects"] and  self.object_data["starving_count"] == 0:
+            self.object_data["status_effects"].remove("starving")
+
+        self.affect_player_status()
+
+    def update_status_effect_in_fight(self):
+        self.object_data["poison_count"] = max(0, 
+        self.object_data["poison_count"] - status_effect_decay_rate_in_fight)
+        
+        self.object_data["paralyze_count"] = max(0,
+        self.object_data["paralyze_count"] - status_effect_decay_rate_in_fight)
+        
+        self.object_data["curse_count"] = max(0, 
+        self.object_data["curse_count"] - status_effect_decay_rate_in_fight)
+
+        self.object_data["seal_count"] = max(0, 
+        self.object_data["seal_count"] - status_effect_decay_rate_in_fight)
+
+        self.object_data["starving_count"] = max(0, 
+        self.object_data["starving_count"] - status_effect_decay_rate_in_fight)
+
+        # Object hp decrases gradually
+        if "poison" in self.object_data["status_effects"] and  self.object_data["poison_count"] == 0:
+            self.object_data["status_effects"].remove("poison")
+
+        # Object hp decrases gradually
+        if "paralyze" in self.object_data["status_effects"] and  self.object_data["paralyze_count"] == 0:
+            self.object_data["status_effects"].remove("paralyze")
+        
+        # Object hp decrases gradually
+        if "curse" in self.object_data["status_effects"] and  self.object_data["curse_count"] == 0:
+            self.object_data["status_effects"].remove("curse")
+
+        # Object hp decrases gradually
+        if "seal" in self.object_data["status_effects"] and  self.object_data["seal_count"] == 0:
+            self.object_data["status_effects"].remove("seal")
+
+        # Object hp decrases gradually
+        if "starving" in self.object_data["status_effects"] and  self.object_data["starving_count"] == 0:
+            self.object_data["status_effects"].remove("starving")
+
+        self.affect_player_status()
