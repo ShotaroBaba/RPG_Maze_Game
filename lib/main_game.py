@@ -27,7 +27,7 @@ debug = True
 # Possibility of using the skill: 20%
 # To test the skills using enemy: Set this to 100% (-.0)
 enemy_use_skill_possibility = 0.2
-
+starving_ep_reduction_rate = 4
 # The value which determine the difficulty of level increase.
 constant_next_level_exp = 1.4
 default_amount_to_reveal = 3
@@ -229,8 +229,15 @@ class MainGame(object):
         enemy = MazeObject(json_data = enemy_json[random_enemy], level = self.level, is_random= "yes")
 
         # TODO: Take player's luckiness into account.
+        # TODO: Find a way to put this method to maze_object.py
         def _player_turn_normal_attack():
+
             # Player turn
+            if "paralyze" in self.player.object_data["status_effects"] and random() < 0.5:
+                print("Player can't act due to the paralysis!")
+                getch()
+                return False
+
             player_base_attack_value = self.player.object_data["current_strength"]
             enemy_durability = enemy.object_data["current_vitality"]
 
@@ -267,7 +274,13 @@ class MainGame(object):
         
         # TODO: Allow enemy to use their skills.
         def _enemy_turn_normal_attack():
+
             # Enemy turn
+            if "paralyze" in enemy.object_data["status_effects"] and random() < 0.5:
+                print("Player can't act due to the paralysis!")
+                getch()
+                return False
+
             enemy_base_attack_value = enemy.object_data["current_strength"]
             player_durability = self.player.object_data["current_vitality"]
             enemy_attack_value = int(round(uniform(0.8,1.0) *(enemy_base_attack_value - (0.2 * player_durability)), 0))
@@ -293,11 +306,22 @@ class MainGame(object):
         # TODO: Both enemy and player can use the same function.
         def _turn_use_skill(skill_data, skill_user, opponent, is_enemy = False, message = "player"):
             
-            if is_enemy and skill_data == None:
-            # If there is no skills, then it will conduct an normal attack
-                _enemy_turn_normal_attack()
+            # Enemy turn
+            if "paralyze" in skill_user.object_data["status_effects"] and random() < 0.5:
+                print("{} can't act due to the paralysis!")
+                getch()
+                return False
+
+            # If "seal" effect is active, then the 
+            if "seal" in skill_user.object_data["status_effects"]:
+                print("{} cannot use skill for seal!".format(message))
                 return
 
+            # If there is no skills, then it will conduct an normal attack
+            if is_enemy and skill_data == None:
+                _enemy_turn_normal_attack()
+                return
+            
             hp_change, mp_change, sp_change, ep_change, is_against_player =\
                 use_skill(skill_user,skill_data, opponent, False)
             
@@ -735,7 +759,9 @@ class MainGame(object):
 
                     if item[item_name]["is_item"]:
                         if use_item(self.player, item_name, item):
+                            getch()
                             del item_list[selection_idx]
+                            
                     elif item[item_name]["is_skill_book"]:
                         # Put the skills on the player if the skill slot is not beyond the skils.
                         self.player.object_data["skills"].append(use_skill_book(skill_json, item[item_name]["level"]))
@@ -1139,20 +1165,29 @@ class MainGame(object):
 
     def _move_player_sub(self,str_direction, next_player_pos):
         
+        if "paralyze" in self.player.object_data["status_effects"]:
+            print("Cannot move due to paralysis!")
+
+        else:
+            # Initialize map using originally created random map.
+            self.map_grid = deepcopy(self.original_map_grid)
+
+            # Place player on the map based on the move player made.
+            self.map_grid[next_player_pos[0]][next_player_pos[1]] = self.player.object_data["displayed_character"]
+
+            # Update player position.
+            self.player.object_data["object_pos"] = next_player_pos
         
-        # Initialize map using originally created random map.
-        self.map_grid = deepcopy(self.original_map_grid)
-
-        # Place player on the map based on the move player made.
-        self.map_grid[next_player_pos[0]][next_player_pos[1]] = self.player.object_data["displayed_character"]
-
-        # Update player position.
-        self.player.object_data["object_pos"] = next_player_pos
         self.player.object_data["current_ep"] = max(self.player.object_data["current_ep"] - 1, 0)
+
+        # The reduction of EP becomes more faster.
+        if "starving" in self.player.object_data["status_effects"]:
+            self.player.object_data["current_ep"] = max(0, self.player.object_data["current_ep"] - starving_ep_reduction_rate)
 
         # if the current ep is zero. the current hp will decreases.
         if self.player.object_data["current_ep"] == 0:
             self.player.object_data["current_hp"] = max(self.player.object_data["current_hp"] - 1, 1)
+
 
         # Before updating object, the status effects is considered.
         self.player.update_status_effect_in_map()

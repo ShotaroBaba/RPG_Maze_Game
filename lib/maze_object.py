@@ -15,6 +15,9 @@ poison_hp_reduction_rate = 0.005
 starving_ep_reduction_rate = 4
 status_effect_decay_rate_in_map = 1
 status_effect_decay_rate_in_fight = 10
+status_effect_decay_rate_in_fight_pararalyze = 1
+status_effect_decay_rate_in_map_paralyze = 1
+
 
 # Used for returning a certain value for a certain situation.
 # The enemy strength is decided randomly.
@@ -345,16 +348,13 @@ class MazeObject(object):
         if "paralyzed" in self.object_data["status_effects"]:
             self.object_data["cannot_act"] = True 
 
-        # The reduction of EP becomes more faster.
-        if "starving" in self.object_data["status_effects"]:
-            self.object_data["current_ep"] -= min(0, self.object_data["current_ep"] - starving_ep_reduction_rate)
 
     def update_status_effect_in_map(self):
         self.object_data["poison_count"] = max(0, 
         self.object_data["poison_count"] - status_effect_decay_rate_in_map)
         
         self.object_data["paralyze_count"] = max(0,
-        self.object_data["paralyze_count"] - status_effect_decay_rate_in_map)
+        self.object_data["paralyze_count"] - status_effect_decay_rate_in_map_paralyze)
         
         self.object_data["curse_count"] = max(0, 
         self.object_data["curse_count"] - status_effect_decay_rate_in_map)
@@ -392,7 +392,7 @@ class MazeObject(object):
         self.object_data["poison_count"] - status_effect_decay_rate_in_fight)
         
         self.object_data["paralyze_count"] = max(0,
-        self.object_data["paralyze_count"] - status_effect_decay_rate_in_fight)
+        self.object_data["paralyze_count"] - status_effect_decay_rate_in_fight_pararalyze)
         
         self.object_data["curse_count"] = max(0, 
         self.object_data["curse_count"] - status_effect_decay_rate_in_fight)
@@ -424,7 +424,8 @@ class MazeObject(object):
             self.object_data["status_effects"].remove("starving")
 
         self.affect_player_status()
-
+    
+    # Put all debug methods below!
     # The following is for the debugging methods for status effects:
     def _reduce_all_status_effects_counts_debug(self):
         self.object_data["poison_count"] = 1

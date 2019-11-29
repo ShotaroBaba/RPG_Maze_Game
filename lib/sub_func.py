@@ -13,6 +13,8 @@ getch = _Getch()
 starving_ep_reduction_rate = 4
 status_effect_decay_rate_in_map = 1
 status_effect_decay_rate_in_fight = 10
+status_effect_decay_rate_in_fight_pararalyze = 1
+status_effect_decay_rate_in_map_paralyze = 1
 
 # class Item(object):
 #     def __init__(self, item_name,json_data = {}, level = 1):
@@ -59,7 +61,7 @@ def find_item_type(item_data, item_types):
 # Randomly select the skills from skill list.
 # Skills are randomly selected based on the book level.
 # When a skill book is used, he/she can obtain one skill randomly.
-# Player cannot choose his/her skills from skill books.
+# Player cannot choose his/her skills as he/she wishes from skill books.
 def use_skill_book(skill_data, book_level = 1):
     # Filter the skill based on the depth of the floor.
     itemized_skill_data = skill_data.items()
@@ -83,49 +85,66 @@ def filter_item_data_by_type(item_data, item_type):
 def use_item(player: MazeObject,item_name,item_data):
 
     # TODO: Do not use item when a current value is the same as a maximum value.
-    hp_changed = mp_changed = sp_changed = ep_changed = False
+    hp_changed = mp_changed = sp_changed = ep_changed =\
+    poison_changed = curse_changed = seal_changed = paralyze_changed = starving_changed = False
      
     if player.object_data["current_hp"] != player.object_data["current_max_hp"] and item_data[item_name]["hp_change"] != 0:
         player.object_data["current_hp"]  = \
             min(player.object_data["current_hp"]  + item_data[item_name]["hp_change"], player.object_data["current_max_hp"])
+        print("hp is recovered by {}".format(item_data[item_name]["hp_change"]))
         hp_changed = True
     
     if player.object_data["current_mp"] != player.object_data["current_max_mp"] and item_data[item_name]["mp_change"] != 0:
         player.object_data["current_mp"]  = \
             min(player.object_data["current_mp"]  + item_data[item_name]["mp_change"], player.object_data["current_max_mp"])
+        print("mp is recovered by {}".format(item_data[item_name]["mp_change"]))
         mp_changed = True
 
     if player.object_data["current_sp"] != player.object_data["current_max_sp"] and item_data[item_name]["sp_change"] != 0:
         player.object_data["current_sp"]  = \
             min(player.object_data["current_sp"]  + item_data[item_name]["sp_change"], player.object_data["current_max_sp"])
+        print("sp is recovered by {}".format(item_data[item_name]["sp_change"]))
         sp_changed = True
     
     if player.object_data["current_ep"] != player.object_data["current_max_ep"] and item_data[item_name]["ep_change"] != 0:
         player.object_data["current_ep"]  = \
             min(player.object_data["current_ep"]  + item_data[item_name]["ep_change"], player.object_data["current_max_ep"])
+        print("ep is recovered by {}".format(item_data[item_name]["ep_change"]))
         ep_changed = True
 
     if "poison" in player.object_data["status_effects"] and item_data[item_name]["cure_poison"]:
-        player.object_data.remove("poison")
+        player.object_data["status_effects"].remove("poison")
         player.object_data["poison_count"] = 0
+        print("Cured poison!")
+        poison_changed = True
 
     if "curse" in player.object_data["status_effects"] and item_data[item_name]["cure_curse"]:
-        player.object_data.remove("curse")
+        player.object_data["status_effects"].remove("curse")
         player.object_data["curse_count"] = 0
+        print("Cured curse!")
+        curse_changed = True
 
     if "seal" in player.object_data["status_effects"] and item_data[item_name]["cure_seal"]:
-        player.object_data.remove("seal")
+        player.object_data["status_effects"].remove("seal")
         player.object_data["seal_count"] = 0
+        print("Cured seal!")
+        seal_changed = True
 
     if "paralyze" in player.object_data["status_effects"] and item_data[item_name]["cure_paralyze"]:
-        player.object_data.remove("paralyze")
+        player.object_data["status_effects"].remove("paralyze")
         player.object_data["paralyze_count"] = 0
+        print("Cured paralyze!")
+        paralyze_changed = True
 
     if "starving" in player.object_data["status_effects"] and item_data[item_name]["cure_starving"]:
-        player.object_data.remove("starving")
+        player.object_data["status_effects"].remove("starving")
         player.object_data["starving_count"] = 0
+        print("Cured starving!")
+        starving_changed = True
 
-    return hp_changed or mp_changed or sp_changed or ep_changed
+    return hp_changed or mp_changed or sp_changed or ep_changed or\
+        poison_changed or curse_changed or seal_changed or paralyze_changed or\
+            starving_changed
 
 def remove_status_effects(user:MazeObject, data, name):
 
@@ -191,13 +210,19 @@ def add_target_status_effect(target:MazeObject, skill_data, skill_name):
 
     if skill_data[skill_name]["starving_possibility"] > uniform(0, 1.0):
         if not "starving" in target.object_data["status_effects"]:
-            target.object_data["status_effects"].append("poistarvingson")
+            target.object_data["status_effects"].append("starving")
         target.object_data["starving_count"] = 200
 
 def use_skill(skill_user, skill_data, target = None, is_in_menu = True):
     
     # TODO: Do not use item when a current value is the same as a maximum value
     skill_name = list(skill_data.keys())[0]
+
+    # If "seal" effect is active, then the 
+    if "seal" in skill_user.object_data["status_effects"]:
+        print("Cannot use skill in seal condition!")
+        getch()
+        return False
 
     if is_in_menu and skill_data[skill_name]["is_in_fight"]:
         print("This skill cannot be used in the player's menu.")

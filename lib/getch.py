@@ -1,4 +1,5 @@
-
+# NOTE: The package errors can be ignored as some of them 
+# cannot be installed due to Operating system environment differences.
 
 class _Getch:
 
