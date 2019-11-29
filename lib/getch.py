@@ -1,5 +1,10 @@
+
 # NOTE: The package errors can be ignored as some of them 
 # cannot be installed due to Operating system environment differences.
+
+# NOTE: The escape key doesn't work well for 
+# linux. Find the library allowing me to flexibly modify
+# the input.
 
 class _Getch:
 
@@ -9,8 +14,36 @@ class _Getch:
         except ImportError:
             self.impl = _GetchUnix()
 
-    def __call__(self): return self.impl()
 
+    def __call__(self):
+        
+        # If the self.impl is unix, then import Unix.
+        if (type(self.impl).__name__ == "_GetchUnix"):
+            charlist = []
+            for i in range(3):
+                try:charlist.append(self.impl())
+                except:pass
+                if charlist[i] not in ["\x1b","\x5b"]:
+                    break
+            if len(charlist) == 3:
+                if charlist[2] == 'A':
+                    return 'UP_KEY'
+                elif charlist[2] == 'B':
+                    return 'DOWN_KEY'
+                elif charlist[2] == 'C':
+                    return 'RIGHT_KEY'
+                elif charlist[2] == 'D':
+                    return 'LEFT_KEY'
+            elif len(charlist)  == 1:
+                if charlist[0] == 'm':
+                    return b'\x1b'
+                else:
+                    return charlist[0].encode()
+        
+        # Else, import windows one.
+        else:
+            return self.impl()
+    
 # TODO: _GetchUnix needs to be modified.
 class _GetchUnix:
     def __init__(self):
@@ -48,5 +81,5 @@ class _GetchWindows:
 #   Retreived from http://code.activestate.com/recipes/134892/
 
 if __name__ == "__main__":
-    for i in range(5):
+    for i in range(15):
         print(_Getch().__call__())

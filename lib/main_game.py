@@ -22,7 +22,9 @@ from sub_func import *
 #######################################################################################################
 ## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #######################################################################################################
-debug = True
+
+# To enable debug mode change the below line into "debug = True".
+debug = False
 
 # Possibility of using the skill: 20%
 # To test the skills using enemy: Set this to 100% (-.0)
@@ -140,7 +142,6 @@ class MainGame(object):
         
 
         self._draw_hidden_map()
-        
         self._manipulate_map()
 
     def _exit_game(self):
@@ -180,6 +181,8 @@ class MainGame(object):
                 
                 # No case --> Do nothing.
                 if cursor_selection == 1:
+                    clear()
+                    self._draw_hidden_map()
                     return False
             clear()
         clear()
