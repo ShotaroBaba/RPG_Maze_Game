@@ -15,7 +15,52 @@
         "level": 1,
         "drop_item": "Potion",
         "exp": 10,
-        "skills": []
+        "skills": [
+            {
+                "Dummy_Poison": {
+                    "attribute": "water",
+                    "hp_change": 1,
+                    "mp_change": 0,
+                    "sp_change": 0,
+                    "ep_change": 0,
+                    "strength_change": 0,
+                    "agility_change": 0,
+                    "vitality_change": 0,
+                    "dexterity_change": 0,
+                    "smartness_change": 0,
+                    "magic_power_change": 0,
+                    "mental_strength_change": 0,
+                    "luckiness_change": 0,
+                    "effective_time": 0,
+                    "durablity_change": 0,
+                    "weight": 0,
+                    "level": 1,
+                    "hp_spent": 0,
+                    "mp_spent": 0,
+                    "sp_spent": 0,
+                    "ep_spent": 0,
+                    "poison_possibility": 1,
+                    "curse_possibility": 0,
+                    "seal_possibility": 0,
+                    "paralyze_possibility": 0,
+                    "starving_possibility": 0,
+                    "strength_multiplier": 0.0,
+                    "agility_multiplier": 0.0,
+                    "vitality_multiplier": 0.0,
+                    "dexterity_multiplier": 0.0,
+                    "smartness_multiplier": 0.0,
+                    "magic_power_multiplier": 0.0,
+                    "mental_strength_multiplier": 0.0,
+                    "luckiness_multiplier": 0.0001,
+                    "is_in_fight": true,
+                    "cure_poison": false,
+                    "cure_curse": false,
+                    "cure_seal": false,
+                    "cure_paralyze": false,
+                    "cure_starving": false
+                }
+            }
+        ]
     },
     "Bat": {
         "hp": 40,
@@ -33,7 +78,52 @@
         "level": 1,
         "drop_item": "Potion",
         "exp": 15,
-        "skills": []
+        "skills": [
+            {
+                "Dummy_Poison": {
+                    "attribute": "water",
+                    "hp_change": 1,
+                    "mp_change": 0,
+                    "sp_change": 0,
+                    "ep_change": 0,
+                    "strength_change": 0,
+                    "agility_change": 0,
+                    "vitality_change": 0,
+                    "dexterity_change": 0,
+                    "smartness_change": 0,
+                    "magic_power_change": 0,
+                    "mental_strength_change": 0,
+                    "luckiness_change": 0,
+                    "effective_time": 0,
+                    "durablity_change": 0,
+                    "weight": 0,
+                    "level": 1,
+                    "hp_spent": 0,
+                    "mp_spent": 0,
+                    "sp_spent": 0,
+                    "ep_spent": 0,
+                    "poison_possibility": 1,
+                    "curse_possibility": 0,
+                    "seal_possibility": 0,
+                    "paralyze_possibility": 0,
+                    "starving_possibility": 0,
+                    "strength_multiplier": 0.0,
+                    "agility_multiplier": 0.0,
+                    "vitality_multiplier": 0.0,
+                    "dexterity_multiplier": 0.0,
+                    "smartness_multiplier": 0.0,
+                    "magic_power_multiplier": 0.0,
+                    "mental_strength_multiplier": 0.0,
+                    "luckiness_multiplier": 0.0001,
+                    "is_in_fight": true,
+                    "cure_poison": false,
+                    "cure_curse": false,
+                    "cure_seal": false,
+                    "cure_paralyze": false,
+                    "cure_starving": false
+                }
+            }
+        ]
     },
     "Small dragon": {
         "hp": 30,
@@ -75,6 +165,11 @@
                     "mp_spent": 10,
                     "sp_spent": 2,
                     "ep_spent": 0,
+                    "poison_possibility": 0,
+                    "curse_possibility": 0,
+                    "seal_possibility": 0,
+                    "paralyze_possibility": 0,
+                    "starving_possibility": 0,
                     "strength_multiplier": 0.0,
                     "agility_multiplier": 0.0,
                     "vitality_multiplier": 0.0,
@@ -83,7 +178,12 @@
                     "magic_power_multiplier": 0.5,
                     "mental_strength_multiplier": 0.1,
                     "luckiness_multiplier": 0.005,
-                    "is_in_fight": false
+                    "is_in_fight": false,
+                    "cure_poison": false,
+                    "cure_curse": false,
+                    "cure_seal": false,
+                    "cure_paralyze": false,
+                    "cure_starving": false
                 }
             },
             {
@@ -109,6 +209,11 @@
                     "mp_spent": 7,
                     "sp_spent": 1,
                     "ep_spent": 0,
+                    "poison_possibility": 0,
+                    "curse_possibility": 0,
+                    "seal_possibility": 0,
+                    "paralyze_possibility": 0,
+                    "starving_possibility": 0,
                     "strength_multiplier": 0.0,
                     "agility_multiplier": 0.0,
                     "vitality_multiplier": 0.0,
@@ -117,7 +222,12 @@
                     "magic_power_multiplier": 0.02,
                     "mental_strength_multiplier": 0.03,
                     "luckiness_multiplier": 0.005,
-                    "is_in_fight": true
+                    "is_in_fight": true,
+                    "cure_poison": false,
+                    "cure_curse": false,
+                    "cure_seal": false,
+                    "cure_paralyze": false,
+                    "cure_starving": false
                 }
             },
             {
@@ -143,6 +253,11 @@
                     "mp_spent": 7,
                     "sp_spent": 1,
                     "ep_spent": 0,
+                    "poison_possibility": 0,
+                    "curse_possibility": 0,
+                    "seal_possibility": 0,
+                    "paralyze_possibility": 0,
+                    "starving_possibility": 0,
                     "strength_multiplier": 0.0,
                     "agility_multiplier": 0.0,
                     "vitality_multiplier": 0.0,
@@ -151,7 +266,12 @@
                     "magic_power_multiplier": 0.4,
                     "mental_strength_multiplier": 0.1,
                     "luckiness_multiplier": 0.005,
-                    "is_in_fight": true
+                    "is_in_fight": true,
+                    "cure_poison": false,
+                    "cure_curse": false,
+                    "cure_seal": false,
+                    "cure_paralyze": false,
+                    "cure_starving": false
                 }
             }
         ]

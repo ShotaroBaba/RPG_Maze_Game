@@ -224,7 +224,7 @@ class MazeObject(object):
 
         # Initialise before assigning the value...
         for j in numerical_player_strengh:
-            self.object_data["current_max_" + j] = self.object_data["current_" + j]
+            self.object_data["current_max_" + j] = self.object_data[j]
         
         
         ##################################
@@ -270,6 +270,8 @@ class MazeObject(object):
         self.object_data["current_exp"] += exp_values
         self.object_data["next_exp"] -= exp_values
 
+        # If the experience reaches another limits, then 
+        # player can go up two or more levels.
         while self.object_data["next_exp"] < 1:
             remain = self.object_data["next_exp"]
             self.object_data["bonus_point"] += 5 + self.object_data["level"] // 5
@@ -321,7 +323,7 @@ class MazeObject(object):
         if "poison" in self.object_data["status_effects"]:
             # HP becomes zero
             self.object_data["current_hp"] -= min(1, 
-                self.object_data["current_hp"] * poison_hp_reduction_rate)
+                1 + round(self.object_data["current_hp"] * poison_hp_reduction_rate, 0))
         
         # All object's status becomes half.
         if "curse" in self.object_data["status_effects"]:
@@ -363,23 +365,23 @@ class MazeObject(object):
         self.object_data["starving_count"] = max(0, 
         self.object_data["starving_count"] - status_effect_decay_rate_in_map)
 
-        # Object hp decrases gradually
+        # Object hp decrases gradually.
         if "poison" in self.object_data["status_effects"] and  self.object_data["poison_count"] == 0:
             self.object_data["status_effects"].remove("poison")
 
-        # Object hp decrases gradually
+        # Object cannot move.
         if "paralyze" in self.object_data["status_effects"] and  self.object_data["paralyze_count"] == 0:
             self.object_data["status_effects"].remove("paralyze")
         
-        # Object hp decrases gradually
+        # Object is cursed, meaning that the status is reduced to half.
         if "curse" in self.object_data["status_effects"] and  self.object_data["curse_count"] == 0:
             self.object_data["status_effects"].remove("curse")
 
-        # Object hp decrases gradually
+        # Object cannot use magic & skills
         if "seal" in self.object_data["status_effects"] and  self.object_data["seal_count"] == 0:
             self.object_data["status_effects"].remove("seal")
 
-        # Object hp decrases gradually
+        # Object starved & reduction of stamina gets faster!
         if "starving" in self.object_data["status_effects"] and  self.object_data["starving_count"] == 0:
             self.object_data["status_effects"].remove("starving")
 
@@ -422,3 +424,14 @@ class MazeObject(object):
             self.object_data["status_effects"].remove("starving")
 
         self.affect_player_status()
+
+    # The following is for the debugging methods for status effects:
+    def _reduce_all_status_effects_counts_debug(self):
+        self.object_data["poison_count"] = 1
+        self.object_data["paralyze_count"] = 1
+        self.object_data["curse_count"] = 1
+        self.object_data["seal_count"] = 1
+        self.object_data["starving_count"] = 1 
+
+        print("All status count is set to 1!!!")
+        pass

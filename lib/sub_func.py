@@ -14,8 +14,6 @@ starving_ep_reduction_rate = 4
 status_effect_decay_rate_in_map = 1
 status_effect_decay_rate_in_fight = 10
 
-
-
 # class Item(object):
 #     def __init__(self, item_name,json_data = {}, level = 1):
 strength_parameters =["strength", "agility", "vitality", "dexterity",
@@ -140,7 +138,6 @@ def remove_status_effects(user:MazeObject, data, name):
         cured_list.append("poison")
         user.object_data["poison_count"] = 0
 
-
     if "curse" in user.object_data["status_effects"] and data[name]["cure_curse"]:
         user.object_data["status_effects"].remove("curse")
         is_removed_status_effect = True
@@ -168,31 +165,31 @@ def remove_status_effects(user:MazeObject, data, name):
     return is_removed_status_effect, cured_list
 
 # The infliction of status effects on either player or enemy.
-def inflict_target_status(target:MazeObject, skill_data, skill_name):
+def add_target_status_effect(target:MazeObject, skill_data, skill_name):
     
     # TODO: Calculate the possibility of status infliction.
 
-    if skill_data[skill_name]["poison_possiblity"] > uniform(0, 1.0):
+    if skill_data[skill_name]["poison_possibility"] > uniform(0, 1.0):
         if not "poison" in target.object_data["status_effects"]:
             target.object_data["status_effects"].append("poison")
         target.object_data["poison_count"] = 100
 
-    if skill_data[skill_name]["curse_possiblity"] > uniform(0, 1.0):
+    if skill_data[skill_name]["curse_possibility"] > uniform(0, 1.0):
         if not "curse" in target.object_data["status_effects"]:
             target.object_data["status_effects"].append("curse")
         target.object_data["curse_count"] = 100
     
-    if skill_data[skill_name]["seal_possiblity"] > uniform(0, 1.0):
+    if skill_data[skill_name]["seal_possibility"] > uniform(0, 1.0):
         if not "seal" in target.object_data["status_effects"]:
             target.object_data["status_effects"].append("seal")
         target.object_data["seal_count"] = 200
     
-    if skill_data[skill_name]["paralyze_possiblity"] > uniform(0, 1.0):
+    if skill_data[skill_name]["paralyze_possibility"] > uniform(0, 1.0):
         if not "paralyze" in target.object_data["status_effects"]:
             target.object_data["status_effects"].append("paralyze")
         target.object_data["paralyze_count"] = 5
 
-    if skill_data[skill_name]["starving_possiblity"] > uniform(0, 1.0):
+    if skill_data[skill_name]["starving_possibility"] > uniform(0, 1.0):
         if not "starving" in target.object_data["status_effects"]:
             target.object_data["status_effects"].append("poistarvingson")
         target.object_data["starving_count"] = 200
@@ -299,7 +296,7 @@ def use_skill(skill_user, skill_data, target = None, is_in_menu = True):
             remove_status_effects(skill_user, skill_data, skill_name)
             
             # Inflict status effects on player or enemy.
-            inflict_target_status(target, skill_data,skill_name)
+            add_target_status_effect(target, skill_data,skill_name)
 
             # Inflict the status effect on user.
             return hp_change, mp_change, sp_change, ep_change, False
@@ -317,3 +314,9 @@ def _use_skill_sub(player,skill_data,changed_value):
         tmp += changed_value * (uniform(0.8, 1.0) * (player.object_data["current_" + i] * skill_data[tmp_name][i + "_multiplier"]))
     
     return int(round(tmp,0))
+
+# NOTE: The following methods are only for debugging purposes.
+# Shows all the contents of data...
+def display_debug_status(obj):
+    # Print all json-formatted player's data:
+    print(obj.object_data)

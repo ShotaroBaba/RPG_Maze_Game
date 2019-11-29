@@ -3,6 +3,7 @@ import sys
 sys.path.insert(0, 'lib/maze_generation.py')
 sys.path.insert(0, 'lib')
 
+# TODO: Improve UI.
 import os
 import json 
 from copy import deepcopy
@@ -17,6 +18,11 @@ from random import random
 from maze_object import MazeObject
 from default_values import *
 from sub_func import *
+
+#######################################################################################################
+## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#######################################################################################################
+debug = True
 
 # Possibility of using the skill: 20%
 # To test the skills using enemy: Set this to 100% (-.0)
@@ -81,6 +87,10 @@ non_selected_parameters = ["current_exp","next_exp","level","current_hp",
                                    "current_mp", "current_sp", "current_ep"]
         
 body_parts_list = ["hand","head", "arm","leg","body_armor","right_wrist","left_wrist","right_finger","left_finger"]
+
+#######################################################################################################
+## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#######################################################################################################
 
 # The map for players to walk at the beginning
 # Randomly select the items from the list based on the item's list and level....
@@ -182,6 +192,12 @@ class MainGame(object):
             if character == b"n":
                 if self._exit_game():
                     break
+            
+            # Debug command when it is enabled
+            elif character == b";":
+                if debug:
+                    self.player._reduce_all_status_effects_counts_debug()
+
             else:
                 if character in ["UP_KEY", "DOWN_KEY", "LEFT_KEY", "RIGHT_KEY"]:
                     if self._move_player(character):
@@ -189,7 +205,7 @@ class MainGame(object):
 
                 elif character == b"\x1b":
                     self.player_menu()
-            
+
 
     # Turn-based fight is now imminent
     # TODO: Enable the random appearance of the enemy based on the depth of the level.
@@ -337,7 +353,7 @@ class MainGame(object):
                 
                 return False
 
-        # Displayed for generating 
+        # Displayed for generating menu.
         while True:
 
             for i in range(len(tmp_cursor)):
@@ -349,6 +365,10 @@ class MainGame(object):
             print("{} appears!".format(random_enemy))
             self._display_status()
             print("\n".join(tmp_cursor))
+            
+            # If the debug is true, then it shows the entire condition of player (in a unformatted manner.)
+            if debug:
+                display_debug_status(self.player)
             tmp_cursor = deepcopy(selection_list)
             tmp_key = getch()
 
@@ -366,7 +386,7 @@ class MainGame(object):
                 # Normally attack the enemy.
                 if cursor_selection == 0:
 
-                    # Turn based fight. The player can firstly fight for the enemy this value is higher.
+                    # Turn based fight. The player can firstly fight for the enemy if this value is higher.
                     if uniform(0.8, 1.0)*self.player.object_data["agility"] > uniform(0.8,1.0)* enemy.object_data["agility"]:
                         # Player turn.
                         if _player_turn_normal_attack():
@@ -395,6 +415,10 @@ class MainGame(object):
                         if _player_turn_normal_attack():
                             break
                     
+                    # Consider status effects after the fight.
+                    self.player.update_status_effect_in_fight()
+                    enemy.update_status_effect_in_fight()
+
                 # Displays the player's status.
                 elif cursor_selection == 1:
                     skill_data = self._display_skills(True)
@@ -429,6 +453,9 @@ class MainGame(object):
                                 break
                         getch()
 
+                    # Consider status effects after the fight.
+                    self.player.update_status_effect_in_fight()
+                    enemy.update_status_effect_in_fight()
                     clear()
                 
                 # Escape from the enemy.
@@ -454,11 +481,7 @@ class MainGame(object):
                     else:
                         print("Cannot escape!")
                         _enemy_turn_normal_attack()
-            
-            # Consider status effects after the fight.
-            self.player.update_status_effect_in_fight()
-            enemy.update_status_effect_in_fight()
-            
+
             clear()
         clear()
         
@@ -797,7 +820,7 @@ class MainGame(object):
                 # TODO: Select only the items labelled as one of body parts.
                 if selection_idx < menu_length - 1:
                     if "hand" in body_parts_list[selection_idx]:
-                        self._display_equitable_items_sub("weapon", "weapon")
+                        self._display_equitable_items_sub("is_weapon", body_parts_list[selection_idx])
                     elif "wrist" in body_parts_list[selection_idx]:
                         self._display_equitable_items_sub("wrist", body_parts_list[selection_idx])
                     elif "finger" in body_parts_list[selection_idx]:
@@ -1163,6 +1186,10 @@ class MainGame(object):
 
             clear()
             self._draw_hidden_map()
+            
+            # If the debug is true, then it shows the entire condition of player (in a unformatted manner.)
+            if debug:
+                display_debug_status(self.player)
 
         elif self.original_map_grid[next_player_pos[0]][next_player_pos[1]] == self.treasure_symbol:
             clear()
@@ -1176,6 +1203,10 @@ class MainGame(object):
             
             clear()
             self._draw_hidden_map()
+            
+            # If the debug is true, then it shows the entire condition of player (in a unformatted manner.)
+            if debug:
+                display_debug_status(self.player)
 
 
         elif self.original_map_grid[next_player_pos[0]][next_player_pos[1]] != "#":
@@ -1186,13 +1217,21 @@ class MainGame(object):
             # Draw the enemy encouter screen.
             if self._enemy_encounter(self.player.object_data["luckiness"]):
                 return True
-
+            
             self._draw_hidden_map()
             
+            # If the debug is true, then it shows the entire condition of player (in a unformatted manner.)
+            if debug:
+                display_debug_status(self.player)
+
         else:
             clear()
             self._draw_hidden_map()
-    
+
+            # If the debug is true, then it shows the entire condition of player (in a unformatted manner.)
+            if debug:
+                display_debug_status(self.player)
+
     # NOTE: The item drop is completely random.
     def _treasure_selection(self, next_player_pos):
          # Allows the users to select whether they will proceed to the next floor...
@@ -1291,3 +1330,7 @@ class MainGame(object):
         # Print map
         print(tmp_str)
         self._display_status()
+
+#######################################################################################################
+## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#######################################################################################################
