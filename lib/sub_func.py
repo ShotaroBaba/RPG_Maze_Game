@@ -21,6 +21,13 @@ status_effect_decay_rate_in_map_paralyze = 1
 strength_parameters =["strength", "agility", "vitality", "dexterity",
                       "smartness", "magic_power", "mental_strength", "luckiness"]
 
+item_change_parameters = ["strength_change","agility_change",
+                          "vitality_change","dexterity_change",
+                          "smartness_change","magic_power_change",
+                          "mental_strength_change","luckiness_change",
+                          "hp_change", "mp_change",
+                          "ep_change","sp_change"]
+
 # Take level into consideration when creating item
 def extract_item_names(item_data):
     if item_data != []:
@@ -53,6 +60,23 @@ def find_item_type(item_data, item_types):
             other_items.append(item_data[i])
 
     return tmp_items, other_items
+
+
+# Change the effects of items (equipment and expendable)
+
+def alter_item_effects_by_level(tmp_key, tmp_item_json, level = 1):
+
+    tmp = {}
+    # All item parameters are changed based on the floor level
+    # Generally, it is often to be positive!
+    for i in item_change_parameters:
+        tmp_item_json[i] = tmp_item_json[i] * (uniform(1,1 + 0.1*level))
+
+    # The item is followed by level.
+    tmp_key += f"_{level}"
+    tmp[tmp_key] = tmp_item_json
+
+    return tmp
 
 # The skill book gives player to create the 
 # Randomly select the skills from skill list.

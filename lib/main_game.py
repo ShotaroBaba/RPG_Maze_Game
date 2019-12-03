@@ -101,7 +101,7 @@ body_parts_list = ["hand","head", "arm","leg","body_armor","right_wrist","left_w
 # the experiment. The items that can be obtained depend on the current level:
 # meaning that if your floor level is below the necessary level, you 
 # cannot obtain the data.
-def random_item_selection(level = 1):
+def select_item_randomly(level = 1):
     tmp = []
     for i in item_json.keys():
         if item_json[i]["level"] <= level:
@@ -1315,10 +1315,10 @@ class MainGame(object):
 
                 # Yes case --> Initialise map.
                 if cursor_selection == 0:
-                    obtained_item = random_item_selection(self.level)
-                    tmp_key = {}
-                    tmp_key[obtained_item] = item_json[obtained_item]
+                    obtained_item = select_item_randomly(self.level)
+                    #tmp_key[obtained_item] = item_json[obtained_item]
                     # TODO: Input & randomly changes the effects of the item.
+                    tmp_key = alter_item_effects_by_level(obtained_item, item_json[obtained_item], self.level)
 
                     self.player.object_data["items"].append(tmp_key)
 

@@ -14,7 +14,6 @@ class _Getch:
         except ImportError:
             self.impl = _GetchUnix()
 
-
     def __call__(self):
         
         # If the self.impl is unix, then import Unix.
