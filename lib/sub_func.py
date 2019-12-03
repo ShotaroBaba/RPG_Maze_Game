@@ -21,18 +21,15 @@ status_effect_decay_rate_in_map_paralyze = 1
 strength_parameters =["strength", "agility", "vitality", "dexterity",
                       "smartness", "magic_power", "mental_strength", "luckiness"]
 
+# Take level into consideration when creating item
 def extract_item_names(item_data):
     if item_data != []:
         return list(map(lambda x: list(x.keys())[0],item_data))
     else:
         return []
 
-# Sort items based on the item types by name.
-def sort_items(item_data):
-    pass
 
 def reduce_item_data(one_item, item_types):
-
     if len(item_types) > 1:
         return reduce(lambda x, y: one_item[list(one_item.keys())[0]]["is_" + x] 
                     or one_item[list(one_item.keys())[0]]["is_" + y], item_types)

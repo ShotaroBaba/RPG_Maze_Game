@@ -96,8 +96,17 @@ body_parts_list = ["hand","head", "arm","leg","body_armor","right_wrist","left_w
 
 # The map for players to walk at the beginning
 # Randomly select the items from the list based on the item's list and level....
+
+# Pick the random items from item boxes based on 
+# the experiment. The items that can be obtained depend on the current level:
+# meaning that if your floor level is below the necessary level, you 
+# cannot obtain the data.
 def random_item_selection(level = 1):
-    return choice(list(item_json.keys()))
+    tmp = []
+    for i in item_json.keys():
+        if item_json[i]["level"] <= level:
+            tmp.append(i)
+    return choice(tmp)
 
 class MainGame(object):
 
@@ -1306,9 +1315,11 @@ class MainGame(object):
 
                 # Yes case --> Initialise map.
                 if cursor_selection == 0:
-                    obtained_item = random_item_selection()
+                    obtained_item = random_item_selection(self.level)
                     tmp_key = {}
                     tmp_key[obtained_item] = item_json[obtained_item]
+                    # TODO: Input & randomly changes the effects of the item.
+
                     self.player.object_data["items"].append(tmp_key)
 
                     # Remove the treasure from original map.
