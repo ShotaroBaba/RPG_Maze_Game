@@ -5,9 +5,11 @@ import json
 from lib.default_values import *
 import tkinter as tk
 
+# TODO: Set various item list for allowing users to set drop item(s).
 file_path = os.path.join(data_dir,creature_data_file_name)
-
 skill_file_path = os.path.join(data_dir, skill_data_file_name)
+item_file_path = os.path.join(data_dir, item_data_file_name)
+
 class Application(object):
 
     def __init__(self):
@@ -101,6 +103,31 @@ class Application(object):
         self.main_group_list_box_raw_skill_list = tk.Listbox(self.main_group_middle_2_2, yscrollcommand = self.main_group_list_box_scroll_raw_skill_list.set)
         self.main_group_list_box_raw_skill_list.pack(side = tk.LEFT, fill = tk.Y)
 
+
+        # Right hand side: parameter 
+        self.main_group_middle_3_1 = tk.Frame(self.main_group_middle_2)
+        self.main_group_middle_3_1.grid(row = 0, column = 1, padx = 3, pady =3, sticky = tk.N)
+
+        # Skill list to input creature.
+        self.main_group_list_box_scroll_item_label = tk.Label(self.main_group_middle_3_1, text = "Creature Items")
+        self.main_group_list_box_scroll_item_label.pack(anchor = tk.CENTER)
+        self.main_group_list_box_scroll_item_list = tk.Scrollbar(self.main_group_middle_3_1)
+        self.main_group_list_box_scroll_item_list.pack(side = tk.RIGHT, fill = tk.Y)
+        self.main_group_list_box_item_list = tk.Listbox(self.main_group_middle_3_1, yscrollcommand = self.main_group_list_box_scroll_item_list.set)
+        self.main_group_list_box_item_list.pack(side = tk.LEFT, fill = tk.Y)
+
+        # Right hand side: parameter 
+        self.main_group_middle_3_2 = tk.Frame(self.main_group_middle_2)
+        self.main_group_middle_3_2.grid(row = 1, column = 1, padx = 3, pady =3, sticky = tk.N)
+
+        # Skill list to input creature.
+        self.main_group_list_box_scroll_creature_item_label = tk.Label(self.main_group_middle_3_2, text = "Item list to put")
+        self.main_group_list_box_scroll_creature_item_label.pack(anchor = tk.CENTER)
+        self.main_group_list_box_scroll_creature_item_list = tk.Scrollbar(self.main_group_middle_3_2)
+        self.main_group_list_box_scroll_creature_item_list.pack(side = tk.RIGHT, fill = tk.Y)
+        self.main_group_list_box_creature_item_list = tk.Listbox(self.main_group_middle_3_2, yscrollcommand = self.main_group_list_box_scroll_creature_item_list.set)
+        self.main_group_list_box_creature_item_list.pack(side = tk.LEFT, fill = tk.Y)
+
         # By double clicking, the skill data will be inserted into the creature.
         self.main_group_list_box_raw_skill_list.bind("<Double-1>", self._insert_creature_skill)
 
@@ -108,7 +135,7 @@ class Application(object):
         self.main_group_right = tk.Frame(self.main_list_frame)
         self.main_group_right.grid(row = 0, column = 3, padx = 3, pady = 3, sticky = tk.NS)
 
-        # Creature data list.
+        # Creature name list.
         self.main_group_list_box_scroll_creature_data = tk.Scrollbar(self.main_group_right)
         self.main_group_list_box_scroll_creature_data.pack(side = tk.RIGHT, fill = tk.Y)
         self.main_group_list_box_creature_data = tk.Listbox(self.main_group_right, yscrollcommand = self.main_group_list_box_scroll_creature_data.set)
