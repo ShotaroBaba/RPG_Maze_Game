@@ -21,6 +21,7 @@ status_effect_decay_rate_in_map_paralyze = 1
 strength_parameters =["strength", "agility", "vitality", "dexterity",
                       "smartness", "magic_power", "mental_strength", "luckiness"]
 
+# The parameter of items will randomly changes.
 item_change_parameters = ["strength_change","agility_change",
                           "vitality_change","dexterity_change",
                           "smartness_change","magic_power_change",
@@ -70,7 +71,7 @@ def alter_item_effects_by_level(tmp_key, tmp_item_json, level = 1):
     # All item parameters are changed based on the floor level
     # Generally, it is often to be positive!
     for i in item_change_parameters:
-        tmp_item_json[i] = tmp_item_json[i] * (uniform(1,1 + 0.1*level))
+        tmp_item_json[i] = int(tmp_item_json[i] * (round(uniform(1,1 + 0.1*level),0) ))
 
     # The item is followed by level.
     tmp_key += f"_{level}"
